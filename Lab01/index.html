@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./src/style/style.css" />
+    <title>Lab1</title>
+  </head>
+  <body class="page">
+    <header class="header">
+      <nav class="nav">
+        <ul class="nav__list">
+          <li class="nav__item">File</li>
+          <li class="nav__item nav__item--dropdown">
+            Actions
+            <div class="dropdown">
+              <div class="dropdown__item" id="menuB3">Робота1</div>
+              <div class="dropdown__item" id="menuB0">Робота2</div>
+              <div class="dropdown__item dropdown-clear" id="clear">Clear</div>
+            </div>
+          </li>
+          <li class="nav__item">Help</li>
+        </ul>
+      </nav>
+    </header>
+    <main class="main-board" id="main-board">
+      <div class="main-board__list" id="list"></div>
+      <div class="main-board__content" id="content"></div>
+    </main>
+    <script type="module" src="./src/Lab1.js"></script>
+  </body>
+</html>
