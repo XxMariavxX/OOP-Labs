@@ -4,22 +4,25 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./src/style/style.css" />
-    <title>Lab1</title>
+    <title>Lab2</title>
   </head>
   <body class="page">
     <header class="header">
       <nav class="nav">
         <ul class="nav__list">
-          <li class="nav__item">File</li>
-          <li class="nav__item nav__item--dropdown">
-            Actions
+          <li class="nav__item nav__item--border">Файл</li>
+          <li class="nav__item nav__item--dropdown nav__item--border">Об'єкти
             <div class="dropdown">
-              <div class="dropdown__item" id="menuB3">Робота1</div>
-              <div class="dropdown__item" id="menuB0">Робота2</div>
-              <div class="dropdown__item dropdown-clear" id="clear">Clear</div>
+              <div class="dropdown__item" id="dot">Крапка</div>
+              <div class="dropdown__item" id="line">Лінія</div>
+              <div class="dropdown__item" id="rectangle">Прямокутник</div>
+              <div class="dropdown__item" id="ellipse">Еліпс</div>
             </div>
           </li>
-          <li class="nav__item">Help</li>
+          <li class="nav__item nav__item--border">Довідка</li>
+          <li class="nav__item">
+            <div class="dropdown__item dropdown-clear" id="clear">Clear</div>
+          </li>
         </ul>
       </nav>
     </header>
@@ -27,6 +30,6 @@
       <div class="main-board__list" id="list"></div>
       <div class="main-board__content" id="content"></div>
     </main>
-    <script type="module" src="./src/Lab1.js"></script>
+    <script type="module" src="./src/js/Lab2.js"></script>
   </body>
 </html>
