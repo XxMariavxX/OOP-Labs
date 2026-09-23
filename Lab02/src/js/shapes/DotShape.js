@@ -1,3 +1,5 @@
+"use strict";
+
 import Shape from "./Shape.js";
 
 export class DotShape extends Shape {

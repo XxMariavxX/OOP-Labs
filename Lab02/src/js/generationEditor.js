@@ -1,3 +1,5 @@
+"use strict";
+
 import { DotShape } from "./shapes/DotShape.js";
 import { LineShape } from "./shapes/LineShape.js";
 import { RectShape } from "./shapes/RectShape.js";
@@ -56,15 +58,20 @@ export class GenerationEditor {
   }
 
   selectShape(type) {
-    this.currentType = type;
+    this.currentType = this.currentType === type ? null : type;
+    this.currentShape = null;
+    this.isDrawing = false;
     Object.keys(this.shapeTypes).forEach((shapeType) => {
       const menuItem = document.getElementById(shapeType);
-      const isSelected = shapeType === type;
+      const isSelected = shapeType === this.currentType;
 
       menuItem.classList.toggle("is-selected", isSelected);
       menuItem.setAttribute("aria-checked", String(isSelected));
     });
-    document.title = `Lab2 - ${this.shapeLabels[type]}`;
+    document.title = this.currentType
+      ? `Lab2 - ${this.shapeLabels[this.currentType]}`
+      : "Lab2";
+    this.render();
   }
 
   resizeCanvas() {
