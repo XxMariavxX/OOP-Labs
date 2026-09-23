@@ -2,6 +2,7 @@ html {
   background-color: #ffffff;
   margin: 0;
   padding: 0;
+  min-height: 100%;
 }
 
 .page {
@@ -9,6 +10,7 @@ html {
   padding: 0;
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
 }
 
 .header {
@@ -17,7 +19,7 @@ html {
   padding: 0 20px;
   border: 1px solid #4c4747;
   width: 100%;
-  height: 80px;
+  min-height: 64px;
   background-color: #e6b4e2c5;
   box-sizing: border-box;
 }
@@ -72,12 +74,22 @@ html {
 
 .dropdown__item {
   padding: 10px 15px;
+  padding-right: 34px;
   white-space: nowrap;
   cursor: pointer;
+  position: relative;
 }
 
 .dropdown__item:hover {
   background-color: #cecacac7;
+}
+
+.dropdown__item.is-selected::after {
+  content: "✓";
+  position: absolute;
+  right: 12px;
+  color: #16733a;
+  font-weight: 700;
 }
 
 .dropdown-clear:hover {
@@ -87,17 +99,25 @@ html {
 }
 
 .main-board {
-  height: 100%;
+  flex: 1;
   width: 100%;
+  min-height: calc(100vh - 64px);
 }
 
 .main-board__content {
-  text-align: center;
-  text-transform: uppercase;
+  height: 100%;
+  min-height: calc(100vh - 96px);
+  padding: 16px;
+  box-sizing: border-box;
 }
 
 .main-board__canvas {
+  display: block;
   border: 1px solid #975151;
   width: 100%;
-  height: 100%;
+  height: calc(100vh - 96px);
+  min-height: 600px;
+  box-sizing: border-box;
+  cursor: crosshair;
+  background-color: #fff;
 }

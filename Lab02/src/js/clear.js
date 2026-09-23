@@ -2,9 +2,10 @@
 
 export function clear() {
   const clear = document.getElementById(`clear`);
-  const mainContent = document.getElementById(`content`);
+  const canvas = document.getElementById(`canvas`);
+  const context = canvas.getContext(`2d`);
 
   clear.addEventListener("click", function () {
-    mainContent.innerHTML = ``;
+    context.clearRect(0, 0, canvas.width, canvas.height);
   });
 }

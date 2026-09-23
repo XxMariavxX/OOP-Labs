@@ -1,7 +1,7 @@
 "use strict";
 
-import { clear } from './modules/clear.js';
+import { GenerationEditor } from './generationEditor.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  clear();
+  new GenerationEditor();
 });
