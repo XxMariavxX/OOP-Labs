@@ -46,7 +46,7 @@ export class GenerationEditor {
       this.shapes = [];
       this.currentShape = null;
       this.isDrawing = false;
-      this.render();
+      this.resetSelection();
     });
   }
 
@@ -71,6 +71,17 @@ export class GenerationEditor {
     document.title = this.currentType
       ? `Lab2 - ${this.shapeLabels[this.currentType]}`
       : "Lab2";
+    this.render();
+  }
+
+  resetSelection() {
+    this.currentType = null;
+    Object.keys(this.shapeTypes).forEach((shapeType) => {
+      const menuItem = document.getElementById(shapeType);
+      menuItem.classList.remove("is-selected");
+      menuItem.setAttribute("aria-checked", "false");
+    });
+    document.title = "Lab2";
     this.render();
   }
 

@@ -25,6 +25,6 @@ export default class Shape {
     this.#y2 = y2;
   }
 
-  draw(ctx) {
+  draw(ctx, isPreview = false) {
   }
 }
