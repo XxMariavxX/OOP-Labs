@@ -8,6 +8,8 @@ export class LineShape extends Shape {
   }
 
   draw(ctx, isPreview = false) {
+    ctx.save();
+
     ctx.beginPath();
     ctx.strokeStyle = "black";
     ctx.setLineDash(isPreview ? [7, 5] : []);
@@ -15,5 +17,7 @@ export class LineShape extends Shape {
     ctx.lineTo(this.x2, this.y2);
     ctx.stroke();
     ctx.setLineDash([]);
+
+    ctx.restore();
   }
 }

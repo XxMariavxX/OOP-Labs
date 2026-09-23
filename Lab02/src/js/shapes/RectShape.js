@@ -10,6 +10,8 @@ export class RectShape extends Shape {
   }
 
   draw(ctx, isPreview = false) {
+    ctx.save();
+
     const widthX = Math.abs(this.x2 - this.x1);
     const heightY = Math.abs(this.y2 - this.y1);
 
@@ -25,5 +27,7 @@ export class RectShape extends Shape {
     ctx.fillRect(left, top, widthAll, heightAll);
     ctx.strokeRect(left, top, widthAll, heightAll);
     ctx.setLineDash([]);
+
+    ctx.restore();
   }
 }

@@ -8,6 +8,8 @@ export class EllipsShape extends Shape {
   }
 
   draw(ctx, isPreview = false) {
+    ctx.save();
+
     const rX = Math.abs(this.x2 - this.x1) / 2;
     const rY = Math.abs(this.y2 - this.y1) / 2;
 
@@ -22,5 +24,7 @@ export class EllipsShape extends Shape {
     ctx.setLineDash(isPreview ? [7, 5] : []);
     ctx.stroke();
     ctx.setLineDash([]);
+
+    ctx.restore();
   }
 }
