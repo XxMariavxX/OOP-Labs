@@ -11,8 +11,10 @@
       <nav class="nav">
         <ul class="nav__list">
           <li class="nav__item nav__item--border">Файл</li>
-          <li class="nav__item nav__item--dropdown nav__item--border" id="objects-menu">Об’єкти
-            <div class="dropdown">
+          <li class="nav__item nav__item--dropdown nav__item--border" id="objects-menu">
+            <span class="objects-toggle" id="objects-toggle">Об’єкти</span>
+            <div class="dropdown objects-toolbar" id="objects-toolbar">
+              <button class="toolbar-close" id="objects-close" type="button" aria-label="Закрити меню об’єктів">×</button>
               <div class="dropdown__item" id="dot" role="menuitemradio" aria-checked="false">Крапка</div>
               <div class="dropdown__item" id="line" role="menuitemradio" aria-checked="false">Лінія</div>
               <div class="dropdown__item" id="rectangle" role="menuitemradio" aria-checked="false">Прямокутник</div>

@@ -43,11 +43,32 @@ export class GenerationEditor {
 
   bindMenu() {
     const objectsMenu = document.getElementById("objects-menu");
-    objectsMenu.addEventListener("mouseenter", () => this.updateMenuSelection());
-    objectsMenu.addEventListener("focusin", () => this.updateMenuSelection());
+    const objectsToggle = document.getElementById("objects-toggle");
+    const objectsClose = document.getElementById("objects-close");
+
+    objectsToggle.addEventListener("click", (event) => {
+      event.stopPropagation();
+      objectsMenu.classList.add("is-open");
+      this.updateMenuSelection();
+    });
+
+    objectsClose.addEventListener("click", (event) => {
+      event.stopPropagation();
+      objectsMenu.classList.remove("is-open");
+    });
+
+    document.addEventListener("click", (event) => {
+      if (!objectsMenu.contains(event.target)) {
+        objectsMenu.classList.remove("is-open");
+      }
+    });
 
     Object.keys(this.shapeTypes).forEach((type) => {
-      document.getElementById(type).addEventListener("click", () => this.selectShape(type));
+      document.getElementById(type).addEventListener("click", (event) => {
+        event.stopPropagation();
+        this.selectShape(type);
+        objectsMenu.classList.remove("is-open");
+      });
     });
 
     document.getElementById("clear").addEventListener("click", () => {
