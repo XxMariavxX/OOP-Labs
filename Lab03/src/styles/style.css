@@ -1,0 +1,123 @@
+html {
+  background-color: #ffffff;
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+.page {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  border: 1px solid #4c4747;
+  width: 100%;
+  min-height: 64px;
+  background-color: #e6b4e2c5;
+  box-sizing: border-box;
+}
+
+.nav {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+}
+
+.nav__list {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 30px;
+  padding: 0;
+  margin: 0;
+}
+
+.nav__item {
+  position: relative;
+  list-style-type: none;
+  cursor: pointer;
+  padding: 10px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: -1px;
+  background-color: #ffffff;
+  border: 2px solid #4c474732;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  min-width: 100px;
+  z-index: 10;
+}
+
+.nav__item--dropdown:hover .dropdown {
+  display: block;
+}
+
+.nav__item--border:hover {
+  background-color: #e778de62;
+  border: 1px solid #4c4747;
+  border-radius: 5px;
+}
+
+.dropdown__item {
+  padding: 10px 15px;
+  padding-right: 34px;
+  white-space: nowrap;
+  cursor: pointer;
+  position: relative;
+}
+
+.dropdown__item:hover {
+  background-color: #cecacac7;
+}
+
+.dropdown__item.is-selected::after {
+  content: "✓";
+  position: absolute;
+  right: 12px;
+  color: #16733a;
+  font-weight: 700;
+}
+
+.dropdown-clear:hover {
+  color: white;
+  background-color: #eb3737bb;
+  border-radius: 5px;
+}
+
+.main-board {
+  flex: 1;
+  width: 100%;
+  min-height: calc(100vh - 64px);
+}
+
+.main-board__content {
+  height: 100%;
+  min-height: calc(100vh - 96px);
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.main-board__canvas {
+  display: block;
+  border: 1px solid #975151;
+  width: 100%;
+  height: calc(100vh - 96px);
+  min-height: 600px;
+  box-sizing: border-box;
+  cursor: crosshair;
+  background-color: #fff;
+}

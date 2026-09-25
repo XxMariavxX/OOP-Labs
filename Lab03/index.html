@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./src/styles/style.css" />
+    <title>Lab3</title>
+  </head>
+  <body class="page">
+    <header class="header">
+      <nav class="nav">
+        <ul class="nav__list">
+          <li class="nav__item nav__item--border">Файл</li>
+          <li class="nav__item nav__item--dropdown nav__item--border">Об’єкти
+            <div class="dropdown">
+              <div class="dropdown__item" id="dot" role="menuitemradio" aria-checked="false">Крапка</div>
+              <div class="dropdown__item" id="line" role="menuitemradio" aria-checked="false">Лінія</div>
+              <div class="dropdown__item" id="rectangle" role="menuitemradio" aria-checked="false">Прямокутник</div>
+              <div class="dropdown__item" id="ellipse" role="menuitemradio" aria-checked="false">Еліпс</div>
+            </div>
+          </li>
+          <li class="nav__item nav__item--border">Довідка</li>
+          <li class="nav__item">
+            <div class="dropdown__item dropdown-clear" id="clear">Clear</div>
+          </li>
+        </ul>
+      </nav>
+    </header>
+    <main class="main-board" id="main-board">
+      <div class="main-board__content" id="content"> 
+        <canvas class="main-board__canvas" id="canvas"></canvas> 
+      </div>
+    </main>
+    <script type="module" src="./src/Lab3.js"></script>
+  </body>
+</html>
