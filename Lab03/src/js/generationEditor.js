@@ -69,8 +69,8 @@ export class GenerationEditor {
       menuItem.setAttribute("aria-checked", String(isSelected));
     });
     document.title = this.currentType
-      ? `Lab2 - ${this.shapeLabels[this.currentType]}`
-      : "Lab2";
+      ? `Lab3 - ${this.shapeLabels[this.currentType]}`
+      : "Lab3";
     this.render();
   }
 
@@ -81,7 +81,7 @@ export class GenerationEditor {
       menuItem.classList.remove("is-selected");
       menuItem.setAttribute("aria-checked", "false");
     });
-    document.title = "Lab2";
+    document.title = "Lab3";
     this.render();
   }
 

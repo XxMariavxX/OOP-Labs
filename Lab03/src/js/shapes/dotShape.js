@@ -6,7 +6,7 @@ export class DotShape extends Shape {
   constructor(x1=0, y1=0) {
     super(x1, y1, x1, y1);
   }
-  draw(ctx, isPreview = false) {
+  draw(ctx) {
     const radius = 4;
 
     ctx.save();
