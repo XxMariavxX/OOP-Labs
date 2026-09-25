@@ -9,7 +9,7 @@ export class EllipsShape extends Shape {
     this.fillColor = "rgba(235, 86, 215, 0.86)";
   }
 
-  draw(ctx) {
+  draw(ctx, isPreview = false) {
     ctx.save();
 
     const rX = Math.abs(this.x2 - this.x1);
@@ -23,10 +23,9 @@ export class EllipsShape extends Shape {
     ctx.beginPath();
 
     ctx.ellipse(cX, cY, rX, rY, 0, 0, 2 * Math.PI);
-    ctx.fillStyle = this.fillColor;
-    ctx.fill();
+    ctx.fillStyle = isPreview ? "transparent" : this.fillColor;
+    if (!isPreview) ctx.fill();
     ctx.stroke();
-    ctx.setLineDash([]);
 
     ctx.restore();
   }

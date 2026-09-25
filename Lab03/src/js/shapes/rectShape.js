@@ -7,7 +7,7 @@ export class RectShape extends Shape {
     super(x1, y1, x2, y2);
   }
 
-  draw(ctx) {
+  draw(ctx, isPreview = false) {
     ctx.save();
 
     const x = Math.min(this.x1, this.x2);
@@ -20,7 +20,6 @@ export class RectShape extends Shape {
     ctx.beginPath();
     ctx.strokeStyle = "black";
     ctx.strokeRect(x, y, width, height);
-    ctx.setLineDash([]);
 
     ctx.restore();
   }
