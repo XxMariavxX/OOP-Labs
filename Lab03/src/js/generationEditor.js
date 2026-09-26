@@ -43,23 +43,22 @@ export class GenerationEditor {
 
   bindMenu() {
     const objectsMenu = document.getElementById("objects-menu");
+    const objectsToolbar = document.getElementById("objects-toolbar");
+    const objectsClose = document.getElementById("objects-close");
 
     if (objectsMenu) {
       objectsMenu.addEventListener("click", (event) => {
         event.stopPropagation();
 
-        objectsMenu.classList.toggle("is-open");
-
-        if (typeof this.onInitMenuPopup === "function") {
-          this.onInitMenuPopup();
-        }
+        const isOpen = objectsMenu.classList.toggle("is-open");
+        objectsToolbar.classList.toggle("is-open", isOpen);
       });
     }
 
-    document.addEventListener("click", (event) => {
-      if (!objectsMenu.contains(event.target)) {
-        objectsMenu.classList.remove("is-open");
-      }
+    objectsClose.addEventListener("click", (event) => {
+      event.stopPropagation();
+      objectsMenu.classList.remove("is-open");
+      objectsToolbar.classList.remove("is-open");
     });
 
     Object.keys(this.shapeTypes).forEach((type) => {
@@ -75,6 +74,8 @@ export class GenerationEditor {
       this.count = 0;
       this.currentShape = null;
       this.isDrawing = false;
+      objectsMenu.classList.remove("is-open");
+      objectsToolbar.classList.remove("is-open");
       this.resetSelection();
     });
   }
