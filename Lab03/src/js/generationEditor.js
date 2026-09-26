@@ -38,24 +38,23 @@ export class GenerationEditor {
       return true;
     } else {
       return false;
-    };
+    }
   }
 
   bindMenu() {
     const objectsMenu = document.getElementById("objects-menu");
-    const objectsToggle = document.getElementById("objects-toggle");
-    const objectsClose = document.getElementById("objects-close");
 
-    objectsToggle.addEventListener("click", (event) => {
-      event.stopPropagation();
-      objectsMenu.classList.add("is-open");
-      this.updateMenuSelection();
-    });
+    if (objectsMenu) {
+      objectsMenu.addEventListener("click", (event) => {
+        event.stopPropagation();
 
-    objectsClose.addEventListener("click", (event) => {
-      event.stopPropagation();
-      objectsMenu.classList.remove("is-open");
-    });
+        objectsMenu.classList.toggle("is-open");
+
+        if (typeof this.onInitMenuPopup === "function") {
+          this.onInitMenuPopup();
+        }
+      });
+    }
 
     document.addEventListener("click", (event) => {
       if (!objectsMenu.contains(event.target)) {
@@ -81,9 +80,15 @@ export class GenerationEditor {
   }
 
   bindCanvas() {
-    this.canvas.addEventListener("mousedown", (event) => this.startDrawing(event));
-    this.canvas.addEventListener("mousemove", (event) => this.updateDrawing(event));
-    this.canvas.addEventListener("mouseup", (event) => this.finishDrawing(event));
+    this.canvas.addEventListener("mousedown", (event) =>
+      this.startDrawing(event),
+    );
+    this.canvas.addEventListener("mousemove", (event) =>
+      this.updateDrawing(event),
+    );
+    this.canvas.addEventListener("mouseup", (event) =>
+      this.finishDrawing(event),
+    );
     this.canvas.addEventListener("mouseleave", () => this.finishDrawing());
   }
 
@@ -161,7 +166,10 @@ export class GenerationEditor {
       const { x, y } = this.getPosition(event);
       this.currentShape.coords(this.startX, this.startY, x, y);
     }
-    if (this.currentShape.x1 !== this.currentShape.x2 || this.currentShape.y1 !== this.currentShape.y2) {
+    if (
+      this.currentShape.x1 !== this.currentShape.x2 ||
+      this.currentShape.y1 !== this.currentShape.y2
+    ) {
       this.addshape(this.currentShape);
     }
     this.currentShape = null;

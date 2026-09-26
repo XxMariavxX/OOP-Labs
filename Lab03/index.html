@@ -11,14 +11,65 @@
       <nav class="nav">
         <ul class="nav__list">
           <li class="nav__item nav__item--border">Файл</li>
-          <li class="nav__item nav__item--dropdown nav__item--border" id="objects-menu">
-            <span class="objects-toggle" id="objects-toggle">Об’єкти</span>
+          <li
+            class="nav__item nav__item--dropdown nav__item--border"
+            id="objects-menu"
+          >
+            <div class="objects-toggle" id="objects-toggle">Об’єкти</div>
             <div class="dropdown objects-toolbar" id="objects-toolbar">
-              <button class="toolbar-close" id="objects-close" type="button" aria-label="Закрити меню об’єктів">×</button>
-              <div class="dropdown__item" id="dot" role="menuitemradio" aria-checked="false">Крапка</div>
-              <div class="dropdown__item" id="line" role="menuitemradio" aria-checked="false">Лінія</div>
-              <div class="dropdown__item" id="rectangle" role="menuitemradio" aria-checked="false">Прямокутник</div>
-              <div class="dropdown__item" id="ellipse" role="menuitemradio" aria-checked="false">Еліпс</div>
+              <button
+                class="toolbar-close"
+                id="objects-close"
+                type="button"
+                aria-label="Закрити меню"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="size-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                  />
+                </svg>
+              </button>
+              <div
+                class="dropdown__item"
+                id="dot"
+                role="menuitemradio"
+                aria-checked="false"
+              >
+                Крапка
+              </div>
+              <div
+                class="dropdown__item"
+                id="line"
+                role="menuitemradio"
+                aria-checked="false"
+              >
+                Лінія
+              </div>
+              <div
+                class="dropdown__item"
+                id="rectangle"
+                role="menuitemradio"
+                aria-checked="false"
+              >
+                Прямокутник
+              </div>
+              <div
+                class="dropdown__item"
+                id="ellipse"
+                role="menuitemradio"
+                aria-checked="false"
+              >
+                Еліпс
+              </div>
             </div>
           </li>
           <li class="nav__item nav__item--border">Довідка</li>
@@ -29,8 +80,8 @@
       </nav>
     </header>
     <main class="main-board" id="main-board">
-      <div class="main-board__content" id="content"> 
-        <canvas class="main-board__canvas" id="canvas"></canvas> 
+      <div class="main-board__content" id="content">
+        <canvas class="main-board__canvas" id="canvas"></canvas>
       </div>
     </main>
     <script type="module" src="./src/Lab3.js"></script>
