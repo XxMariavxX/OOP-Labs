@@ -102,6 +102,14 @@ html {
   background: #eb3737bb;
 }
 
+.toolbar__icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  pointer-events: none;
+  align-items: center;
+}
+
 .nav__item--border:hover {
   background-color: #e778de62;
   border: 1px solid #4c4747;

@@ -55,29 +55,36 @@ export class GenerationEditor {
       });
     }
 
-    objectsClose.addEventListener("click", (event) => {
-      event.stopPropagation();
-      objectsMenu.classList.remove("is-open");
-      objectsToolbar.classList.remove("is-open");
-    });
+    if (objectsClose) {
+      objectsClose.addEventListener("click", (event) => {
+        event.stopPropagation();
+        objectsMenu.classList.remove("is-open");
+        objectsToolbar.classList.remove("is-open");
+      });
+    }
 
     Object.keys(this.shapeTypes).forEach((type) => {
-      document.getElementById(type).addEventListener("click", (event) => {
-        event.stopPropagation();
-        this.selectShape(type);
-        objectsMenu.classList.remove("is-open");
-      });
+      const btn = document.getElementById(type);
+      if (btn) {
+        btn.addEventListener("click", (event) => {
+          event.stopPropagation();
+          this.selectShape(type);
+        });
+      }
     });
 
-    document.getElementById("clear").addEventListener("click", () => {
-      this.shapes.fill(null);
-      this.count = 0;
-      this.currentShape = null;
-      this.isDrawing = false;
-      objectsMenu.classList.remove("is-open");
-      objectsToolbar.classList.remove("is-open");
-      this.resetSelection();
-    });
+    const clearBtn = document.getElementById("clear");
+    if (clearBtn) {
+      clearBtn.addEventListener("click", () => {
+        this.shapes.fill(null);
+        this.count = 0;
+        this.currentShape = null;
+        this.isDrawing = false;
+        objectsMenu.classList.remove("is-open");
+        objectsToolbar.classList.remove("is-open");
+        this.resetSelection();
+      });
+    }
   }
 
   bindCanvas() {
