@@ -31,6 +31,14 @@ export class GenerationEditor {
     window.addEventListener("resize", () => this.resizeCanvas());
   }
 
+  onNotify(selectedType) {
+    this.currentType = this.currentType === selectedType ? null : selectedType;
+    this.currentShape = null;
+    this.isDrawing = false;
+    this.updateMenuSelection();
+    this.render();
+  }
+
   addshape(shape) {
     if (this.count < this.maxSize) {
       this.shapes[this.count] = shape;
@@ -46,31 +54,47 @@ export class GenerationEditor {
     const objectsToolbar = document.getElementById("objects-toolbar");
     const objectsClose = document.getElementById("objects-close");
 
+    const closeObjectsMenu = () => {
+      if (objectsMenu) objectsMenu.classList.remove("is-open");
+      if (objectsToolbar) objectsToolbar.classList.remove("is-open");
+    };
+
     if (objectsMenu) {
       objectsMenu.addEventListener("click", (event) => {
         event.stopPropagation();
+        if (objectsToolbar && objectsToolbar.contains(event.target)) return;
 
         const isOpen = objectsMenu.classList.toggle("is-open");
-        objectsToolbar.classList.toggle("is-open", isOpen);
+        if (objectsToolbar) objectsToolbar.classList.toggle("is-open", isOpen);
       });
     }
 
     if (objectsClose) {
       objectsClose.addEventListener("click", (event) => {
         event.stopPropagation();
-        objectsMenu.classList.remove("is-open");
-        objectsToolbar.classList.remove("is-open");
+        closeObjectsMenu();
       });
     }
 
-    Object.keys(this.shapeTypes).forEach((type) => {
-      const btn = document.getElementById(type);
-      if (btn) {
-        btn.addEventListener("click", (event) => {
-          event.stopPropagation();
-          this.selectShape(type);
-        });
+    document.addEventListener("click", (event) => {
+      if (objectsMenu && !objectsMenu.contains(event.target)) {
+        closeObjectsMenu();
       }
+    });
+
+    Object.keys(this.shapeTypes).forEach((type) => {
+      const menuEl = document.getElementById(type);
+      const toolbarBtn = document.getElementById(`toolbar-${type}`) || document.querySelector(`[data-type="${type}"]`);
+
+      [menuEl, toolbarBtn].forEach((element) => {
+        if (element) {
+          element.addEventListener("click", (event) => {
+            event.stopPropagation();
+            this.onNotify(type);
+            closeObjectsMenu();
+          });
+        }
+      });
     });
 
     const clearBtn = document.getElementById("clear");
@@ -80,32 +104,17 @@ export class GenerationEditor {
         this.count = 0;
         this.currentShape = null;
         this.isDrawing = false;
-        objectsMenu.classList.remove("is-open");
-        objectsToolbar.classList.remove("is-open");
+        closeObjectsMenu();
         this.resetSelection();
       });
     }
   }
 
   bindCanvas() {
-    this.canvas.addEventListener("mousedown", (event) =>
-      this.startDrawing(event),
-    );
-    this.canvas.addEventListener("mousemove", (event) =>
-      this.updateDrawing(event),
-    );
-    this.canvas.addEventListener("mouseup", (event) =>
-      this.finishDrawing(event),
-    );
+    this.canvas.addEventListener("mousedown", (event) => this.startDrawing(event));
+    this.canvas.addEventListener("mousemove", (event) => this.updateDrawing(event));
+    this.canvas.addEventListener("mouseup", (event) => this.finishDrawing(event));
     this.canvas.addEventListener("mouseleave", () => this.finishDrawing());
-  }
-
-  selectShape(type) {
-    this.currentType = this.currentType === type ? null : type;
-    this.currentShape = null;
-    this.isDrawing = false;
-    this.updateMenuSelection();
-    this.render();
   }
 
   updateMenuSelection() {
@@ -113,8 +122,10 @@ export class GenerationEditor {
       const menuItem = document.getElementById(shapeType);
       const isSelected = shapeType === this.currentType;
 
-      menuItem.classList.toggle("is-selected", isSelected);
-      menuItem.setAttribute("aria-checked", String(isSelected));
+      if (menuItem) {
+        menuItem.classList.toggle("is-selected", isSelected);
+        menuItem.setAttribute("aria-checked", String(isSelected));
+      }
     });
   }
 
@@ -136,7 +147,6 @@ export class GenerationEditor {
 
   getPosition(event) {
     const bounds = this.canvas.getBoundingClientRect();
-
     return {
       x: event.clientX - bounds.left,
       y: event.clientY - bounds.top,
