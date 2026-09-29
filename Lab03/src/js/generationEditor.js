@@ -83,18 +83,15 @@ export class GenerationEditor {
     });
 
     Object.keys(this.shapeTypes).forEach((type) => {
-      const menuEl = document.getElementById(type);
-      const toolbarBtn = document.getElementById(`toolbar-${type}`) || document.querySelector(`[data-type="${type}"]`);
+      const toolbarButton = document.getElementById(type);
 
-      [menuEl, toolbarBtn].forEach((element) => {
-        if (element) {
-          element.addEventListener("click", (event) => {
-            event.stopPropagation();
-            this.onNotify(type);
-            closeObjectsMenu();
-          });
-        }
-      });
+      if (toolbarButton) {
+        toolbarButton.addEventListener("click", (event) => {
+          event.stopPropagation();
+          this.onNotify(type);
+          closeObjectsMenu();
+        });
+      }
     });
 
     const clearBtn = document.getElementById("clear");
