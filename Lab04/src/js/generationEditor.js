@@ -119,7 +119,6 @@ export class GenerationEditor {
 
   resetSelection() {
     this.currentType = null;
-    this.updateCursor();
     this.updateMenuSelection();
     this.render();
   }
