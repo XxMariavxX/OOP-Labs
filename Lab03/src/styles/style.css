@@ -10,7 +10,8 @@ html {
   padding: 0;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .header {
@@ -60,23 +61,9 @@ html {
   display: inline-block;
 }
 
-.nav__item--dropdown.is-open .objects-toggle {
-  display: none;
-}
-
-.nav__item.nav__item--dropdown.is-open {
-  width: 0;
-  height: 0;
-  padding: 0;
-  border-color: transparent;
-  background-color: transparent;
-  cursor: default;
-}
-
 .objects-toolbar {
-  display: none;
-  position: absolute;
-  top: 60px;
+  display: flex;
+  position: relative;
   background-color: #ffffff;
   border: 1px solid #4c4747;
   border-radius: 6px;
@@ -88,15 +75,17 @@ html {
   gap: 14px;
 }
 
-.objects-toolbar.is-open {
-  display: flex;
-}
-
 .objects-toolbar--items {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 10px;
+}
+
+.objects-toolbar--items .dropdown__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .toolbar__btn {
@@ -134,7 +123,7 @@ html {
   border: 1px solid #4c4747;
   border-radius: 50%;
   cursor: pointer;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
@@ -179,6 +168,10 @@ html {
   display: block;
 }
 
+.nav__item--dropdown.is-open .dropdown {
+  display: block;
+}
+
 .dropdown__item {
   padding: 10px 15px;
   padding-right: 34px;
@@ -208,12 +201,14 @@ html {
 .main-board {
   flex: 1;
   width: 100%;
-  min-height: calc(100vh - 64px);
+  min-height: 0;
+  overflow: hidden;
 }
 
 .main-board__content {
+  flex: 1;
   height: 100%;
-  min-height: calc(100vh - 96px);
+  min-height: 0;
   padding: 16px;
   box-sizing: border-box;
 }
@@ -222,8 +217,8 @@ html {
   display: block;
   border: 1px solid #975151;
   width: 100%;
-  height: calc(100vh - 96px);
-  min-height: 600px;
+  height: 100%;
+  min-height: 0;
   box-sizing: border-box;
   cursor: crosshair;
   background-color: #fff;

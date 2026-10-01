@@ -51,35 +51,24 @@ export class GenerationEditor {
 
   bindMenu() {
     const objectsMenu = document.getElementById("objects-menu");
-    const objectsToolbar = document.getElementById("objects-toolbar");
-    const objectsClose = document.getElementById("objects-close");
-
-    const closeObjectsMenu = () => {
-      if (objectsMenu) objectsMenu.classList.remove("is-open");
-      if (objectsToolbar) objectsToolbar.classList.remove("is-open");
-    };
 
     if (objectsMenu) {
       objectsMenu.addEventListener("click", (event) => {
         event.stopPropagation();
-        if (objectsToolbar && objectsToolbar.contains(event.target)) return;
+        objectsMenu.classList.toggle("is-open");
+      });
 
-        const isOpen = objectsMenu.classList.toggle("is-open");
-        if (objectsToolbar) objectsToolbar.classList.toggle("is-open", isOpen);
+      document.addEventListener("click", () => {
+        objectsMenu.classList.remove("is-open");
       });
     }
 
-    if (objectsClose) {
-      objectsClose.addEventListener("click", (event) => {
+    document.querySelectorAll("[data-shape-type]").forEach((menuItem) => {
+      menuItem.addEventListener("click", (event) => {
         event.stopPropagation();
-        closeObjectsMenu();
+        this.onNotify(menuItem.dataset.shapeType);
+        objectsMenu?.classList.remove("is-open");
       });
-    }
-
-    document.addEventListener("click", (event) => {
-      if (objectsMenu && !objectsMenu.contains(event.target)) {
-        closeObjectsMenu();
-      }
     });
 
     Object.keys(this.shapeTypes).forEach((type) => {
@@ -89,7 +78,6 @@ export class GenerationEditor {
         toolbarButton.addEventListener("click", (event) => {
           event.stopPropagation();
           this.onNotify(type);
-          closeObjectsMenu();
         });
       }
     });
@@ -101,7 +89,6 @@ export class GenerationEditor {
         this.count = 0;
         this.currentShape = null;
         this.isDrawing = false;
-        closeObjectsMenu();
         this.resetSelection();
       });
     }
