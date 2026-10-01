@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./src/styles/style.css" />
+    <title>Lab4</title>
+  </head>
+  <body class="page">
+    <header class="header">
+      <nav class="nav">
+        <ul class="nav__list">
+          <li class="nav__item nav__item--border">Файл</li>
+          <li
+            class="nav__item nav__item--dropdown nav__item--border"
+            id="objects-menu"
+          >
+            <span class="objects-toggle">Об’єкти</span>
+            <div class="dropdown" role="menu">
+              <div class="dropdown__item" data-shape-type="dot" role="menuitem">
+                Крапка
+              </div>
+              <div class="dropdown__item" data-shape-type="line" role="menuitem">
+                Лінія
+              </div>
+              <div
+                class="dropdown__item"
+                data-shape-type="rectangle"
+                role="menuitem"
+              >
+                Прямокутник
+              </div>
+              <div class="dropdown__item" data-shape-type="ellipse" role="menuitem">
+                Еліпс
+              </div>
+            </div>
+          </li>
+          <li class="nav__item nav__item--border">Довідка</li>
+          <li class="nav__item">
+            <div class="dropdown__item dropdown-clear" id="clear">Clear</div>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <div class="objects-toolbar" id="objects-toolbar">
+      <div class="objects-toolbar--items">
+        <div
+          class="dropdown__item"
+          id="dot"
+          role="menuitemradio"
+          aria-checked="false"
+          title="Крапка"
+        >
+          <img
+            src="./images/toolbar_point.png"
+            alt="Крапка"
+            class="toolbar__icon"
+            title='Крапка'
+          />
+        </div>
+        <div
+          class="dropdown__item"
+          id="line"
+          role="menuitemradio"
+          aria-checked="false"
+          title="Лінія"
+        >
+          <img
+            src="./images/toolbar_line.png"
+            alt="Лінія"
+            class="toolbar__icon"
+          />
+        </div>
+        <div
+          class="dropdown__item"
+          id="rectangle"
+          role="menuitemradio"
+          aria-checked="false"
+          title="Прямокутник"
+        >
+          <img
+            src="./images/toolbar_rectangle.png"
+            alt="Прямокутник"
+            class="toolbar__icon"
+          />
+        </div>
+        <div
+          class="dropdown__item"
+          id="ellipse"
+          role="menuitemradio"
+          aria-checked="false"
+          title="Еліпс"
+        >
+          <img
+            src="./images/toolbar_ellipse.png"
+            alt="Еліпс"
+            class="toolbar__icon"
+          />
+        </div>
+      </div>
+    </div>
+
+    <main class="main-board" id="main-board">
+      <div class="main-board__content" id="content">
+        <canvas class="main-board__canvas" id="canvas"></canvas>
+      </div>
+    </main>
+    <script type="module" src="./src/Lab4.js"></script>
+  </body>
+</html>
