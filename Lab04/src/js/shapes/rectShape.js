@@ -19,7 +19,9 @@ export class RectShape extends Shape {
 
     ctx.beginPath();
     ctx.strokeStyle = "black";
+    ctx.setLineDash(isPreview ? [7, 5] : []);
     ctx.strokeRect(x, y, width, height);
+    ctx.setLineDash([]);
 
     ctx.restore();
   }

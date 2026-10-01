@@ -4,6 +4,8 @@ import { DotShape } from "./shapes/dotShape.js";
 import { LineShape } from "./shapes/lineShape.js";
 import { RectShape } from "./shapes/rectShape.js";
 import { EllipsShape } from "./shapes/ellipsShape.js";
+import { LineSegmentShape } from "./shapes/lineSegmentShape.js";
+import { CubeShape } from "./shapes/cubeShape.js";
 
 export class GenerationEditor {
   constructor() {
@@ -23,6 +25,8 @@ export class GenerationEditor {
       line: LineShape,
       rectangle: RectShape,
       ellipse: EllipsShape,
+      lineSegment: LineSegmentShape,
+      cube: CubeShape
     };
 
     this.resizeCanvas();
@@ -115,6 +119,7 @@ export class GenerationEditor {
 
   resetSelection() {
     this.currentType = null;
+    this.updateCursor();
     this.updateMenuSelection();
     this.render();
   }

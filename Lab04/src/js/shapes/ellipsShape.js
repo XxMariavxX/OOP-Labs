@@ -21,10 +21,17 @@ export class EllipsShape extends Shape {
     if (rX === 0 || rY === 0) return;
 
     ctx.beginPath();
-
     ctx.ellipse(cX, cY, rX, rY, 0, 0, 2 * Math.PI);
-    ctx.fillStyle = isPreview ? "transparent" : this.fillColor;
-    if (!isPreview) ctx.fill();
+
+    if (isPreview) {
+      ctx.setLineDash(isPreview ? [7, 5] : []);
+    }
+    else {
+      ctx.setLineDash([]);
+      ctx.fillStyle = this.fillColor;
+      ctx.fill();
+    }
+
     ctx.stroke();
 
     ctx.restore();
