@@ -25,6 +25,8 @@ export class LineSegmentShape extends Shape {
     let lEndX = this.x2;
     let lEndY = this.y2;
 
+    if (length === 0) return;
+
     if (length > r * 2) {
       const offsetX = (dx / length) * r;
       const offsetY = (dy / length) * r;

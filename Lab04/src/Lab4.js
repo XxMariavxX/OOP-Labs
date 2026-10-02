@@ -1,7 +1,7 @@
 "use strict";
 
-import { GenerationEditor } from './js/generationEditor.js';
+import { myEditor } from "./js/generationEditor.js";
 
 document.addEventListener('DOMContentLoaded', () => {
-  new GenerationEditor();
+  myEditor;
 });

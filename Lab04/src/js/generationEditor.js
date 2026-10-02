@@ -7,7 +7,7 @@ import { EllipsShape } from "./shapes/ellipsShape.js";
 import { LineSegmentShape } from "./shapes/lineSegmentShape.js";
 import { CubeShape } from "./shapes/cubeShape.js";
 
-export class GenerationEditor {
+class GenerationEditor {
   constructor() {
     this.canvas = document.getElementById("canvas");
     this.ctx = this.canvas.getContext("2d");
@@ -195,3 +195,5 @@ export class GenerationEditor {
     if (preview) preview.draw(this.ctx, true);
   }
 }
+
+export const myEditor = new GenerationEditor();
