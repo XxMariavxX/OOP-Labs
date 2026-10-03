@@ -57,10 +57,6 @@ html {
   user-select: none;
 }
 
-.table-header {
-  cursor: pointer;
-}
-
 .objects-toggle {
   display: inline-block;
 }
