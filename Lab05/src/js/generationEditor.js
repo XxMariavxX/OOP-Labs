@@ -105,8 +105,10 @@ export class GenerationEditor {
     }
 
     const loadedShapes = shapes.map((shape) => {
-      const ShapeClass = this.shapeTypes[shape.type] ??
-        this.shapeTypes[this.shapeTypeNames[shape.type]];
+      const type = this.shapeTypes[shape.type]
+        ? shape.type
+        : this.shapeTypeNames[shape.type];
+      const ShapeClass = this.shapeTypes[type];
 
       if (!ShapeClass) {
         throw new Error(`невідомий тип фігури: ${shape.type}`);
@@ -116,7 +118,11 @@ export class GenerationEditor {
       if (!coordinates.every((coordinate) => Number.isFinite(Number(coordinate)))) {
         throw new Error("файл містить некоректні координати");
       }
-      return new ShapeClass(...coordinates.map(Number));
+      const loadedShape = new ShapeClass(...coordinates.map(Number));
+      if (!this.isShapeDrawable(loadedShape, type)) {
+        throw new Error("файл містить невидиму фігуру без розміру");
+      }
+      return loadedShape;
     });
 
     this.shapes.fill(null);
@@ -242,16 +248,23 @@ export class GenerationEditor {
     this.render(this.currentShape);
   }
 
+  isShapeDrawable(shape, type) {
+    const width = Math.abs(shape.x2 - shape.x1);
+    const height = Math.abs(shape.y2 - shape.y1);
+    const requiresArea = ["rectangle", "ellipse", "cube"].includes(type);
+
+    return requiresArea
+      ? width > 0 && height > 0
+      : width > 0 || height > 0;
+  }
+
   finishDrawing(event) {
     if (!this.isDrawing || !this.currentShape) return;
     if (event) {
       const { x, y } = this.getPosition(event);
       this.currentShape.coords(this.startX, this.startY, x, y);
     }
-    if (
-      this.currentShape.x1 !== this.currentShape.x2 ||
-      this.currentShape.y1 !== this.currentShape.y2
-    ) {
+    if (this.isShapeDrawable(this.currentShape, this.currentType)) {
       this.addshape(this.currentShape);
     }
     this.currentShape = null;
