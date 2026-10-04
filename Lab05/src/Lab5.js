@@ -10,14 +10,23 @@ document.addEventListener("DOMContentLoaded", () => {
   const loadButton = document.getElementById("load-btn");
   const loadInput = document.getElementById("load-input");
   const tableButton = document.getElementById("table-header");
+  const fileMenu = document.querySelector(".nav__item--dropdown");
+
+  const closeFileMenu = () => fileMenu?.classList.remove("is-open");
 
   myEditor.onShapesChanged = (shapes) => table.update(shapes);
 
-  saveButton?.addEventListener("click", () => {
+  saveButton?.addEventListener("click", (event) => {
+    event.stopPropagation();
     FileManeger.saveToFile(myEditor);
+    closeFileMenu();
   });
 
-  loadButton?.addEventListener("click", () => loadInput?.click());
+  loadButton?.addEventListener("click", (event) => {
+    event.stopPropagation();
+    closeFileMenu();
+    loadInput?.click();
+  });
 
   loadInput?.addEventListener("change", async () => {
     const file = loadInput.files?.[0];

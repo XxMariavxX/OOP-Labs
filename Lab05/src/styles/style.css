@@ -299,3 +299,16 @@ html {
 .table th {
   text-align: center;
 }
+
+.droppdown--active {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #ffffff;
+  border: 1px solid #4c4747;
+  border-radius: 5px;
+  min-width: 120px;
+  z-index: 100;
+  padding: 2px 0;
+}

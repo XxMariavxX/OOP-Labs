@@ -132,23 +132,19 @@ export class GenerationEditor {
 
   bindMenu() {
     const objectsMenu = document.getElementById("objects-menu");
+    const dropdownMenus = document.querySelectorAll(".nav__item--dropdown");
 
-    if (objectsMenu) {
-      objectsMenu.addEventListener("click", (event) => {
-        event.stopPropagation();
-        objectsMenu.classList.toggle("is-open");
-      });
+    const closeDropdowns = () => {
+      dropdownMenus.forEach((menu) => menu.classList.remove("is-open"));
+    };
 
-      document.addEventListener("click", () => {
-        objectsMenu.classList.remove("is-open");
-      });
-    }
+    document.addEventListener("click", closeDropdowns);
 
     document.querySelectorAll("[data-shape-type]").forEach((menuItem) => {
       menuItem.addEventListener("click", (event) => {
         event.stopPropagation();
         this.onNotify(menuItem.dataset.shapeType);
-        objectsMenu?.classList.remove("is-open");
+        closeDropdowns();
       });
     });
 
@@ -158,6 +154,7 @@ export class GenerationEditor {
       if (toolbarButton) {
         toolbarButton.addEventListener("click", (event) => {
           event.stopPropagation();
+          closeDropdowns();
           this.onNotify(type);
         });
       }
@@ -166,6 +163,7 @@ export class GenerationEditor {
     const clearBtn = document.getElementById("clear");
     if (clearBtn) {
       clearBtn.addEventListener("click", () => {
+        closeDropdowns();
         this.shapes.fill(null);
         this.count = 0;
         this.currentShape = null;
