@@ -2,7 +2,7 @@
 
 import { myEditor } from "./js/generationEditor.js";
 import { GenerationTable } from "./js/generationTable.js";
-import { FileManager } from "./js/fileManeger.js";
+import { FileManeger } from "./js/fileManeger.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const table = new GenerationTable("table-container");
@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
   myEditor.onShapesChanged = (shapes) => table.update(shapes);
 
   saveButton?.addEventListener("click", () => {
-    FileManager.saveToFile(myEditor);
+    FileManeger.saveToFile(myEditor);
   });
 
   tableButton?.addEventListener("click", () => {

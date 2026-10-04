@@ -1,6 +1,6 @@
 "use strict";
 
-export class FileManager {
+export class FileManeger {
   static saveToFile(data, filename = "shapes.json") {
     if (!data) return;
 
