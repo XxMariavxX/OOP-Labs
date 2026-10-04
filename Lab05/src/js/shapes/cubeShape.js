@@ -6,7 +6,7 @@ import { LineShape } from "./lineShape.js";
 
 export class CubeShape extends Shape {
   constructor(x1=0, y1=0, x2=0, y2=0) {
-    super(x1, y1, x2 - x1, y2 - y1);
+    super(x1, y1, x2, y2);
   }
 
   draw(ctx, isPreview = false) {
