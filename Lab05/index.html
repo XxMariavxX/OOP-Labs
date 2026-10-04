@@ -4,18 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./src/styles/style.css" />
-    <title>Lab4</title>
+    <title>Lab5</title>
   </head>
   <body class="page">
     <header class="header">
       <nav class="nav">
         <ul class="nav__list">
-          <li class="nav__item nav__item--border">
+          <li class="nav__item nav__item--dropdown nav__item--border">
             <span class="objects-toggle">Файл</span>
             <div class="dropdown" role="menu">
               <div class="dropdown__item" id="save-btn" role="menuitem">
                 Зберегти у файл
               </div>
+              <div class="dropdown__item" id="load-btn" role="menuitem">
+                Відкрити файл
+              </div>
+              <input id="load-input" type="file" accept="application/json,.json" hidden />
             </div>
           </li>
 

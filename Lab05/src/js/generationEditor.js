@@ -33,6 +33,9 @@ export class GenerationEditor {
       lineSegment: LineSegmentShape,
       cube: CubeShape
     };
+    this.shapeTypeNames = Object.fromEntries(
+      Object.entries(this.shapeTypes).map(([type, ShapeClass]) => [ShapeClass.name, type])
+    );
 
     this.onShapesChanged = null;
     GenerationEditor.#instance = this;
@@ -77,7 +80,7 @@ export class GenerationEditor {
     for (let i = 0; i < this.count; i++) {
       if (this.shapes[i]) {
         shapesStructure.push({
-          type: this.shapes[i].constructor.name,
+          type: this.shapeTypeNames[this.shapes[i].constructor.name] ?? this.shapes[i].constructor.name,
           x1: this.shapes[i].x1,
           y1: this.shapes[i].y1,
           x2: this.shapes[i].x2,
@@ -86,6 +89,45 @@ export class GenerationEditor {
       }
     }
     return shapesStructure;
+  }
+
+  registerShape(type, ShapeClass) {
+    if (!type || typeof ShapeClass !== "function") {
+      throw new TypeError("Потрібні ключ типу та клас фігури");
+    }
+    this.shapeTypes[type] = ShapeClass;
+    this.shapeTypeNames[ShapeClass.name] = type;
+  }
+
+  loadShapes(shapes) {
+    if (shapes.length > this.maxSize) {
+      throw new Error(`можна завантажити не більше ${this.maxSize} фігур`);
+    }
+
+    const loadedShapes = shapes.map((shape) => {
+      const ShapeClass = this.shapeTypes[shape.type] ??
+        this.shapeTypes[this.shapeTypeNames[shape.type]];
+
+      if (!ShapeClass) {
+        throw new Error(`невідомий тип фігури: ${shape.type}`);
+      }
+
+      const coordinates = [shape.x1, shape.y1, shape.x2, shape.y2];
+      if (!coordinates.every((coordinate) => Number.isFinite(Number(coordinate)))) {
+        throw new Error("файл містить некоректні координати");
+      }
+      return new ShapeClass(...coordinates.map(Number));
+    });
+
+    this.shapes.fill(null);
+    loadedShapes.forEach((shape, index) => {
+      this.shapes[index] = shape;
+    });
+    this.count = loadedShapes.length;
+    this.currentShape = null;
+    this.isDrawing = false;
+    this.render();
+    this.notifyShapesChanged();
   }
 
   bindMenu() {
