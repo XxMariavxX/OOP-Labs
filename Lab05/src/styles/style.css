@@ -268,10 +268,6 @@ html {
   background: #eb3737;
 }
 
-.table-header__close:focus-visible {
-  outline: 1px solid #b51f1f;
-}
-
 .table-header__icon {
   width: 22px;
   height: 22px;
@@ -311,4 +307,8 @@ html {
   min-width: 120px;
   z-index: 100;
   padding: 2px 0;
+}
+
+.delete-btn {
+  cursor: pointer;
 }

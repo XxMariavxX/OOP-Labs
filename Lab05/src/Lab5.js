@@ -14,7 +14,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const closeFileMenu = () => fileMenu?.classList.remove("is-open");
 
-  myEditor.onShapesChanged = (shapes) => table.update(shapes);
+  myEditor.onShapesChanged = (shapes, selectedIndex) => {
+    table.update(shapes, selectedIndex);
+  };
+
+  table.rowSelect = (index) => {
+    myEditor.selectShape(index);
+  };
+
+  table.rowDelete = (index) => {
+    myEditor.deleteShapeAt(index);
+  };
 
   saveButton?.addEventListener("click", (event) => {
     event.stopPropagation();

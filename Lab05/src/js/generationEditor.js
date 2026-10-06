@@ -15,7 +15,7 @@ export class GenerationEditor {
 
     this.canvas = document.getElementById("canvas");
     this.ctx = this.canvas.getContext("2d");
-    this.maxSize = 128;
+    this.maxSize = 127;
     this.shapes = new Array(this.maxSize).fill(null);
     this.count = 0;
     this.currentType = null;
@@ -23,7 +23,7 @@ export class GenerationEditor {
     this.isDrawing = false;
     this.startX = 0;
     this.startY = 0;
-    this.selectedInx = 0;
+    this.selectedInx = -1;
 
     this.shapeTypes = {
       dot: DotShape,
@@ -69,9 +69,34 @@ export class GenerationEditor {
     return true;
   }
 
+  selectShape(index) {
+    this.selectedInx = this.selectedInx === index ? -1 : index;
+    this.render();
+    this.notifyShapesChanged();
+  }
+
+  deleteShapeAt(index) {
+    if (index < 0 || index >= this.count) return;
+
+    for (let i = index; i < this.count - 1; i++) {
+      this.shapes[i] = this.shapes[i + 1];
+    }
+    this.shapes[this.count - 1] = null;
+    this.count--;
+
+    if (this.selectedInx === index) {
+      this.selectedInx = -1;
+    } else if (this.selectedInx > index) {
+      this.selectedInx--;
+    }
+
+    this.render();
+    this.notifyShapesChanged();
+  }
+
   notifyShapesChanged() {
     if (typeof this.onShapesChanged === "function") {
-      this.onShapesChanged(this.getShapesStructure());
+      this.onShapesChanged(this.getShapesStructure(), this.selectedInx);
     }
   }
 
@@ -132,12 +157,12 @@ export class GenerationEditor {
     this.count = loadedShapes.length;
     this.currentShape = null;
     this.isDrawing = false;
+    this.selectedInx = -1;
     this.render();
     this.notifyShapesChanged();
   }
 
   bindMenu() {
-    const objectsMenu = document.getElementById("objects-menu");
     const dropdownMenus = document.querySelectorAll(".nav__item--dropdown");
 
     const closeDropdowns = () => {
@@ -174,6 +199,7 @@ export class GenerationEditor {
         this.count = 0;
         this.currentShape = null;
         this.isDrawing = false;
+        this.selectedInx = -1;
         this.resetSelection();
         this.notifyShapesChanged();
       });
@@ -181,10 +207,27 @@ export class GenerationEditor {
   }
 
   bindCanvas() {
-    this.canvas.addEventListener("mousedown", (event) => this.startDrawing(event));
-    this.canvas.addEventListener("mousemove", (event) => this.updateDrawing(event));
-    this.canvas.addEventListener("mouseup", (event) => this.finishDrawing(event));
-    this.canvas.addEventListener("mouseleave", () => this.finishDrawing());
+    this.canvas.addEventListener("mousedown", (event) => {
+      this.startDrawing(event);
+    });
+
+    this.canvas.addEventListener("mousemove", (event) => {
+      if (this.isDrawing) {
+        this.updateDrawing(event);
+      }
+    });
+
+    this.canvas.addEventListener("mouseup", (event) => {
+      if (this.isDrawing) {
+        this.finishDrawing(event);
+      }
+    });
+
+    this.canvas.addEventListener("mouseleave", (event) => {
+      if (this.isDrawing) {
+        this.finishDrawing(event);
+      }
+    });
   }
 
   updateMenuSelection() {
@@ -217,10 +260,9 @@ export class GenerationEditor {
 
   getPosition(event) {
     const bounds = this.canvas.getBoundingClientRect();
-    return {
-      x: event.clientX - bounds.left,
-      y: event.clientY - bounds.top
-    };
+    const x = Math.max(0, Math.min(event.clientX - bounds.left, bounds.width));
+    const y = Math.max(0, Math.min(event.clientY - bounds.top, bounds.height));
+    return { x, y };
   }
 
   startDrawing(event) {
@@ -279,7 +321,16 @@ export class GenerationEditor {
 
     for (let i = 0; i < this.count; i++) {
       if (!this.shapes[i]) continue;
-      this.shapes[i].draw(this.ctx);
+
+      if (i === this.selectedInx) {
+        this.ctx.save();
+        this.ctx.shadowColor = "#ff0000";
+        this.ctx.shadowBlur = 10;
+        this.shapes[i].draw(this.ctx);
+        this.ctx.restore();
+      } else {
+        this.shapes[i].draw(this.ctx);
+      }
     }
     if (preview) preview.draw(this.ctx, true);
   }
