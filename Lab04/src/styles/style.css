@@ -184,10 +184,6 @@ html {
   position: relative;
 }
 
-.dropdown__item:hover {
-  background-color: #cecacac7;
-}
-
 .dropdown__item.is-selected::after {
   content: "✓";
   position: absolute;
@@ -226,4 +222,24 @@ html {
   box-sizing: border-box;
   cursor: crosshair;
   background-color: #fff;
+}
+
+.table tr.is-hovered {
+  background-color: #fff0f0;
+  cursor: pointer;
+}
+
+.table tr.is-selected {
+  background-color: #ffd6d6;
+}
+
+.table tbody tr {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.delete-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

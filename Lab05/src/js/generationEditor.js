@@ -70,9 +70,8 @@ export class GenerationEditor {
   }
 
   selectShape(index) {
-    this.selectedInx = this.selectedInx === index ? -1 : index;
+    this.selectedInx = index;
     this.render();
-    this.notifyShapesChanged();
   }
 
   deleteShapeAt(index) {
@@ -322,15 +321,17 @@ export class GenerationEditor {
     for (let i = 0; i < this.count; i++) {
       if (!this.shapes[i]) continue;
 
+      this.ctx.save();
       if (i === this.selectedInx) {
-        this.ctx.save();
-        this.ctx.shadowColor = "#ff0000";
-        this.ctx.shadowBlur = 10;
-        this.shapes[i].draw(this.ctx);
-        this.ctx.restore();
-      } else {
-        this.shapes[i].draw(this.ctx);
+        this.ctx.shadowColor = "#c42121";
+        this.ctx.shadowBlur = 8;
+        this.ctx.strokeStyle = "#c02f2f";
+        this.ctx.fillStyle = "rgba(210, 33, 83, 0.15)";
+        this.ctx.lineWidth = 2.5;
       }
+
+      this.shapes[i].draw(this.ctx);
+      this.ctx.restore();
     }
     if (preview) preview.draw(this.ctx, true);
   }

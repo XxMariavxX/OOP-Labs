@@ -28,7 +28,7 @@ export class GenerationTable {
               <th>Тип</th>
               <th>x1, y1</th>
               <th>x2, y2</th>
-              <th>Дія</th>
+              <th>Видалити</th>
             </tr>
           </thead>
           <tbody id="shapes-table-body">
@@ -87,29 +87,33 @@ export class GenerationTable {
 
       row.addEventListener("mouseleave", () => {
         row.classList.remove("is-hovered");
-        if (!row.classList.contains("is-selected") && typeof this.rowSelect === "function") {
-          this.rowSelect(isCurrentlySelected ? index : -1);
+        if (typeof this.rowSelect === "function") {
+          const selectedRow = tableBody.querySelector("tr.is-selected");
+          const selectedIdx = selectedRow ? Number(selectedRow.querySelector(".delete-btn")?.dataset.index) : -1;
+          this.rowSelect(selectedIdx);
         }
       });
 
       row.addEventListener("click", (event) => {
         if (event.target.closest(".delete-btn")) return;
 
-        const previouslySelected = tableBody.querySelector("tr.is-selected");
-        if (previouslySelected && previouslySelected !== row) {
-          previouslySelected.classList.remove("is-selected");
+        const isCurrentlySelected = row.classList.contains("is-selected");
+        
+        tableBody.querySelectorAll("tr").forEach((r) => r.classList.remove("is-selected"));
+
+        if (!isCurrentlySelected) {
+          row.classList.add("is-selected");
         }
 
-        const isCurrentlySelected = row.classList.toggle("is-selected");
-
         if (typeof this.rowSelect === "function") {
-          this.rowSelect(isCurrentlySelected ? index : -1);
+          this.rowSelect(isCurrentlySelected ? -1 : index);
         }
       });
 
       const deleteBtn = row.querySelector(".delete-btn");
       deleteBtn?.addEventListener("click", (event) => {
         event.stopPropagation();
+        event.preventDefault();
         if (typeof this.rowDelete === "function") {
           this.rowDelete(index);
         }
