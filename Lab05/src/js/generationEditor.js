@@ -323,10 +323,10 @@ export class GenerationEditor {
 
       this.ctx.save();
       if (i === this.selectedInx) {
-        this.ctx.shadowColor = "#c42121";
+        this.ctx.shadowColor = "#cf0de0";
         this.ctx.shadowBlur = 8;
-        this.ctx.strokeStyle = "#c02f2f";
-        this.ctx.fillStyle = "rgba(210, 33, 83, 0.15)";
+        this.ctx.strokeStyle = "#c28fc2";
+        this.ctx.fillStyle = "rgba(211, 120, 146, 0.15)";
         this.ctx.lineWidth = 2.5;
       }
 

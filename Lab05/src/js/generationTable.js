@@ -73,7 +73,7 @@ export class GenerationTable {
         <td>${shape.type}</td>
         <td>${shape.x1}, ${shape.y1}</td>
         <td>${shape.x2}, ${shape.y2}</td>
-        <td>
+        <td style="text-align: center;">
           <button type="button" class="delete-btn" data-index="${index}" title="Вилучити об'єкт">❌</button>
         </td>
       `;
