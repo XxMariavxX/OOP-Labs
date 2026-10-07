@@ -143,9 +143,6 @@ export class GenerationEditor {
         throw new Error("файл містить некоректні координати");
       }
       const loadedShape = new ShapeClass(...coordinates.map(Number));
-      if (!this.isShapeDrawable(loadedShape, type)) {
-        throw new Error("файл містить невидиму фігуру без розміру");
-      }
       return loadedShape;
     });
 
