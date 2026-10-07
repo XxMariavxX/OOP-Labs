@@ -256,8 +256,8 @@ export class GenerationEditor {
 
   getPosition(event) {
     const bounds = this.canvas.getBoundingClientRect();
-    const x = Math.max(0, Math.min(event.clientX - bounds.left, bounds.width));
-    const y = Math.max(0, Math.min(event.clientY - bounds.top, bounds.height));
+    const x = Math.round(Math.max(0, Math.min(event.clientX - bounds.left, bounds.width)));
+    const y = Math.round(Math.max(0, Math.min(event.clientY - bounds.top, bounds.height)));
     return { x, y };
   }
 
