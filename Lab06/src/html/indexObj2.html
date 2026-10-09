@@ -3,9 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Vector - генератор</title>
+  <link rel="stylesheet" href="../styles/styleObj2.css">
 </head>
-<body>
-  
+<body class="body" id="body">
+  <main class="body-main" id="main">
+    <h1 class="body-main__title">Згенерувати вектор</h1>
+    <div class="main--status" class="status--idle">
+    Очікування введенних даних
+    </div>
+
+    <div class="main-table__container">
+      <table class="main-table" id="main-table">
+        <thead>
+          <tr>
+            <th>Індекс</th>
+            <th>Значення</th>
+          </tr>
+        </thead>
+        <tbody class="table-values" id="table-values">
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script type="module" src="../js/obj2.js"></script>
 </body>
 </html>
