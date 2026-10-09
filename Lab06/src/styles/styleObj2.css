@@ -1,0 +1,69 @@
+.main--status {
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  text-align: center;
+  font-weight: 500;
+  color: #8f0991;
+}
+
+.main-table__container {
+  max-height: 400px;
+  overflow-y: auto;
+  border-radius: 12px;
+  background-color: #ffffff;
+  border: 1px solid #e9d5ff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.main-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  text-align: center;
+}
+
+.main-table thead {
+  position: sticky;
+  top: 0;
+  background-color: #cd86d4;
+  color: #ffffff;
+  z-index: 1;
+}
+
+.main-table th {
+  padding: 10px 14px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.main-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #f3e8ff;
+  color: #374151;
+}
+
+.main-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.main-table tbody tr:nth-child(even) {
+  background-color: #faf5ff;
+}
+
+.main-table tbody tr:hover {
+  background-color: #f3e8ff;
+}
+
+.main-table__container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.main-table__container::-webkit-scrollbar-thumb {
+  background-color: #c084fc;
+  border-radius: 4px;
+}
+
+.main-table__container::-webkit-scrollbar-track {
+  background-color: transparent;
+}
