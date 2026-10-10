@@ -1,4 +1,4 @@
-import Chart from "chart.js/auto";
+import Chart from "../node_modules/chart.js/auto/auto.js";
 
 class Object3 {
   constructor() {

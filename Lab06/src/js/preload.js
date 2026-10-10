@@ -1,7 +1,6 @@
-import { contextBridge, ipcRenderer, clipboard } from 'electron';
+const { contextBridge, ipcRenderer, clipboard } = require('electron');
 
 contextBridge.exposeInMainWorld("electronAPI", {
-  notifyReady: (component) => ipcRenderer.send("component-ready", component),
   startProcessing: (params) => ipcRenderer.send("start-processing", params),
 
   onGenerateData: (callback) => {
@@ -16,5 +15,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
     ipcRenderer.on('read-clipboard-and-draw', () => callback());
   },
 
-  readFromClipboard: () => clipboard.readText()
+  readFromClipboard: () => clipboard.readText(),
+
+  notifyReady: () => ipcRenderer.send('notify-ready')
 });

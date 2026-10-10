@@ -39,11 +39,13 @@ class Lab6Manager {
   }
 
   createWindows() {
+    const preloadPath = path.join(__dirname, "js", "preload.js");
+
     this.winObj1 = new BrowserWindow({
       width: 500,
       height: 500,
       webPreferences: {
-        preload: path.join(__dirname, "js", "preload.js"),
+        preload: preloadPath,
         contextIsolation: true,
         nodeIntegration: false,
       },
@@ -53,7 +55,7 @@ class Lab6Manager {
       width: 600,
       height: 400,
       webPreferences: {
-        preload: path.join(__dirname, "js", "preload.js"),
+        preload: preloadPath,
         contextIsolation: true,
         nodeIntegration: false,
       },
@@ -63,7 +65,7 @@ class Lab6Manager {
       width: 800,
       height: 600,
       webPreferences: {
-        preload: path.join(__dirname, "js", "preload.js"),
+        preload: preloadPath,
         contextIsolation: true,
         nodeIntegration: false,
       },
@@ -121,13 +123,14 @@ class Lab6Manager {
       }
     });
 
-    ipcMain.on("start-processing", (event, params) => {
+    ipcMain.on("start-processing", (_event, params) => {
       if (this.object2Ready && this.winObj2) {
         this.winObj2.webContents.send("generate-data", params);
       } else {
         this.pendingParams = params;
       }
     });
+
     ipcMain.on("data-copied-to-clipboard", () => {
       if (this.object3Ready && this.winObj3) {
         this.winObj3.webContents.send("read-clipboard-and-draw");

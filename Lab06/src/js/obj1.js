@@ -9,23 +9,27 @@ class Object1 {
   }
 
   initEvents() {
-    this.btnExecute.addEventListener("click", () => this.handleExecute());
+    this.btnExecute.addEventListener("click", (e) => {
+      e.preventDefault();
+      this.handleExecute();
+    });
   }
 
   handleExecute() {
-    const n = Number(this.n.value);
-    const max = Number(this.max.value);
-    const min = Number(this.min.value);
+    const rawN = this.n.value;
+    const rawMax = this.max.value;
+    const rawMin = this.min.value;
 
-    if (
-      this.n.value.trim() === "" ||
-      this.max.value.trim() === "" ||
-      this.min.value.trim() === "" ||
-      !Number.isInteger(n) ||
-      n < 1 ||
-      !Number.isFinite(max) ||
-      !Number.isFinite(min)
-    ) {
+    if (rawN.trim() === "" || rawMax.trim() === "" || rawMin.trim() === "") {
+      alert("Введіть коректні числові значення для всіх полів");
+      return;
+    }
+
+    const n = Number(rawN);
+    const max = Number(rawMax);
+    const min = Number(rawMin);
+
+    if (!Number.isInteger(n) || n < 1 || !Number.isFinite(max) || !Number.isFinite(min)) {
       alert("Введіть коректні числові значення для всіх полів");
       return;
     }
