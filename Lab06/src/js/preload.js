@@ -1,5 +1,4 @@
-//bridge between node.js і сторінками
-import { contextBridge, ipcRenderer, clipboard } from ("electron");
+import { contextBridge, ipcRenderer, clipboard } from 'electron';
 
 contextBridge.exposeInMainWorld("electronAPI", {
   startProcessing: (params) => ipcRenderer.send("start-processing", params),
