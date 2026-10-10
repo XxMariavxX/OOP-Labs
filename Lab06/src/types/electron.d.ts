@@ -7,6 +7,7 @@ type GenerationParams = {
 };
 
 type ElectronApi = {
+  notifyReady: (component: "object2" | "object3") => void;
   startProcessing: (params: GenerationParams) => void;
   onGenerateData: (callback: (params: GenerationParams) => void) => void;
   writeToClipboard: (text: string) => void;

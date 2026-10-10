@@ -3,7 +3,7 @@ import Chart from "chart.js/auto";
 class Object3 {
   constructor() {
     this.chartCanvas = document.getElementById("myChart");
-    this.chart = null;
+    this.chartInstance = null;
 
     this.initListeners();
   }
@@ -73,4 +73,5 @@ class Object3 {
 
 document.addEventListener("DOMContentLoaded", () => {
   new Object3();
+  window.electronAPI.notifyReady("object3");
 });

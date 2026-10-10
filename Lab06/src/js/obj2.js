@@ -55,4 +55,5 @@ class Object2 {
 
 document.addEventListener("DOMContentLoaded", () => {
   new Object2();
+  window.electronAPI.notifyReady("object2");
 });
