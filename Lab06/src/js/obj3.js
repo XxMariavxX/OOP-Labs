@@ -1,5 +1,3 @@
-import Chart from "../node_modules/chart.js/auto/auto.js";
-
 class Object3 {
   constructor() {
     this.chartCanvas = document.getElementById("myChart");
@@ -22,6 +20,7 @@ class Object3 {
 
     return rawText.trim().split(" ").map(Number);
   }
+
   readAndRender() {
     const data = this.readDataFromClipboard();
     if (data && data.length > 0) {

@@ -17,5 +17,5 @@ contextBridge.exposeInMainWorld("electronAPI", {
 
   readFromClipboard: () => clipboard.readText(),
 
-  notifyReady: () => ipcRenderer.send('notify-ready')
+  notifyReady: (component) => ipcRenderer.send('notify-ready', component)
 });
