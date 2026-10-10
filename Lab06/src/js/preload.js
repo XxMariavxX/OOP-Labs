@@ -1,4 +1,6 @@
-import { contextBridge, ipcRenderer, clipboard } from 'electron';
+import electron from 'electron';
+
+const { contextBridge, ipcRenderer, clipboard } = electron;
 
 contextBridge.exposeInMainWorld("electronAPI", {
   startProcessing: (params) => ipcRenderer.send("start-processing", params),

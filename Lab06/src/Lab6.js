@@ -35,8 +35,8 @@ class Lab6Manager {
 
   createWindows() {
     this.winObj1 = new BrowserWindow({
-      width: 400,
-      height: 300,
+      width: 500,
+      height: 500,
       webPreferences: {
         preload: path.join(__dirname, "js", "preload.js"),
         contextIsolation: true,
@@ -67,6 +67,10 @@ class Lab6Manager {
     this.winObj1.loadFile(path.join(__dirname, "html", "indexObj1.html"));
     this.winObj2.loadFile(path.join(__dirname, "html", "indexObj2.html"));
     this.winObj3.loadFile(path.join(__dirname, "html", "indexObj3.html"));
+
+    if (this.winObj1) {
+  this.winObj1.focus();
+}
   }
 
   setupListeners() {

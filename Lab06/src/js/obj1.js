@@ -12,30 +12,33 @@ class Object1 {
     this.btnExecute.addEventListener("click", () => this.handleExecute());
   }
 
-  getFormData() {
-    const n = parseInt(this.n.value);
-    const max = parseInt(this.max.value);
-    const min = parseInt(this.min.value);
-    return { n, max, min };
-  }
-
   handleExecute() {
-    const params = this.getFormData();
+    const n = Number(this.n.value);
+    const max = Number(this.max.value);
+    const min = Number(this.min.value);
 
-    if (isNaN(params.n) || isNaN(params.max) || isNaN(params.min)) {
+    if (
+      this.n.value.trim() === "" ||
+      this.max.value.trim() === "" ||
+      this.min.value.trim() === "" ||
+      !Number.isInteger(n) ||
+      n < 1 ||
+      !Number.isFinite(max) ||
+      !Number.isFinite(min)
+    ) {
       alert("Введіть коректні числові значення для всіх полів");
       return;
     }
 
-    if (params.min >= params.max) {
+    if (min >= max) {
       alert("Мінімальне значення повинно бути менше за максимальне");
       return;
     }
 
-    window.electronAPI.startProcessing(params);
+    window.electronAPI.startProcessing({ n, max, min });
   }
 }
 
-  document.addEventListener("DOMContentLoaded", () => {
-    new FormManager();
+document.addEventListener("DOMContentLoaded", () => {
+  new Object1();
 });

@@ -11,6 +11,8 @@ class Object2 {
       window.electronAPI.onGenerateData((params) => {
         this.processGeneration(params);
       });
+    } else {
+      console.error("window.electronAPI або onGenerateData не знайдено у другому вікні!");
     }
   }
 
@@ -24,13 +26,13 @@ class Object2 {
   }
 
   renderTable(vector) {
-    if (!this.tbody) return;
-    this.tbody.innerHTML = "";
+    if (!this.tableValues) return;
+    this.tableValues.innerHTML = "";
 
     vector.forEach((val, index) => {
       const row = document.createElement("tr");
       row.innerHTML = `<td>${index}</td><td>${val}</td>`;
-      this.tbody.appendChild(row);
+      this.tableValues.appendChild(row);
     });
   }
 
