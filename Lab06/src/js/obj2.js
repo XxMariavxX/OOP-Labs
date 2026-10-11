@@ -2,6 +2,7 @@ class Object2 {
   constructor() {
     this.tableValues = document.getElementById('table-values');
     this.statusEl = document.getElementById("main--status");
+    this.electronAPI = electronAPI;
 
     this.initIoListeners();
   }
@@ -11,8 +12,6 @@ class Object2 {
       window.electronAPI.onGenerateData((params) => {
         this.processGeneration(params);
       });
-    } else {
-      console.error("window.electronAPI або onGenerateData не знайдено у другому вікні!");
     }
   }
 
@@ -41,19 +40,26 @@ class Object2 {
     this.renderTable(vector);
 
     const textData = vector.join(" ");
-    window.electronAPI.writeToClipboard(textData);
 
     if (this.statusEl) {
-      this.statusEl.innerText = `Згенеровано ${n} елементів і збережено в Clipboard!`;
+      this.statusEl.innerText = `Згенеровано ${n} елементів`;
       this.statusEl.classList.remove("status--idle");
       this.statusEl.classList.add("status--success");
     }
 
-    window.electronAPI.notifyCopiedToClipboard();
+    try {
+      window.electronAPI.writeToClipboard(textData);
+    } catch (e) {
+      console.warn("Спроба запису у clipboard:", e);
+    }
+
+    window.electronAPI.notifyCopiedToClipboard({ textData, vector });
   }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   new Object2();
-  window.electronAPI.notifyReady("object2");
+  if (window.electronAPI && window.electronAPI.notifyReady) {
+    window.electronAPI.notifyReady("object2");
+  }
 });

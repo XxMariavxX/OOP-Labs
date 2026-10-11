@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, clipboard } from "electron";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -14,7 +14,7 @@ class Lab6Manager {
     this.object2Ready = false;
     this.object3Ready = false;
     this.pendingParams = null;
-    this.pendingChartUpdate = false;
+    this.pendingVectorData = null;
 
     this.initApp();
   }
@@ -39,7 +39,7 @@ class Lab6Manager {
   }
 
   createWindows() {
-    const preloadPath = path.join(__dirname, "js", "preload.js");
+    const preloadPath = path.join(__dirname, "js", "preload.cjs");
 
     this.winObj1 = new BrowserWindow({
       width: 500,
@@ -116,9 +116,9 @@ class Lab6Manager {
 
       if (component === "object3") {
         this.object3Ready = true;
-        if (this.pendingChartUpdate && this.winObj3) {
-          this.winObj3.webContents.send("read-clipboard-and-draw");
-          this.pendingChartUpdate = false;
+        if (this.pendingVectorData && this.winObj3) {
+          this.winObj3.webContents.send("read-clipboard-and-draw", this.pendingVectorData);
+          this.pendingVectorData = null;
         }
       }
     });
@@ -131,11 +131,21 @@ class Lab6Manager {
       }
     });
 
-    ipcMain.on("data-copied-to-clipboard", () => {
+    ipcMain.on("data-copied-to-clipboard", (_event, payload) => {
+      const { textData, vector } = payload || {};
+
+      if (textData) {
+        try {
+          clipboard.writeText(textData);
+        } catch (e) {
+          console.error("Помилка запису у Clipboard:", e);
+        }
+      }
+
       if (this.object3Ready && this.winObj3) {
-        this.winObj3.webContents.send("read-clipboard-and-draw");
+        this.winObj3.webContents.send("read-clipboard-and-draw", vector);
       } else {
-        this.pendingChartUpdate = true;
+        this.pendingVectorData = vector;
       }
     });
   }

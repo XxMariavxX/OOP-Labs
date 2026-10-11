@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "main": "src/Lab6.js",
+  "main": "./src/Lab6.js",
   "scripts": {
     "start": "electron .",
     "dev": "vite",
