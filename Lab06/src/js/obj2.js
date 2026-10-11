@@ -1,3 +1,5 @@
+/// <reference path="../types/electron.d.ts" />
+
 class Object2 {
   constructor() {
     this.tableValues = document.getElementById('table-values');

@@ -1,3 +1,5 @@
+/// <reference path="../types/electron.d.ts" />
+
 class Object3 {
   constructor() {
     this.canvas = document.getElementById("myChart");

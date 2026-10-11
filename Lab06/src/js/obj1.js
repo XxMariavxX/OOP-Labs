@@ -1,3 +1,5 @@
+/// <reference path="../types/electron.d.ts" />
+
 class Object1 {
   constructor() {
     this.n = document.getElementById("input-n");
