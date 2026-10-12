@@ -30,12 +30,6 @@ class Lab6Manager {
         app.quit();
       }
     });
-
-    app.on("activate", () => {
-      if (BrowserWindow.getAllWindows().length === 0) {
-        this.createWindows();
-      }
-    });
   }
 
   createWindows() {
