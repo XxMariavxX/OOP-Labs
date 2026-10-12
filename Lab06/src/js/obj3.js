@@ -48,7 +48,7 @@ class Object3 {
 
     this.canvas.width = rect.width * dpr;
     this.canvas.height = rect.height * dpr;
-    ctx.scale(dpr, dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
     const width = rect.width;
     const height = rect.height;

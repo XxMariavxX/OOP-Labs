@@ -4,7 +4,6 @@ class Object2 {
   constructor() {
     this.tableValues = document.getElementById('table-values');
     this.statusEl = document.getElementById("main--status");
-    this.electronAPI = electronAPI;
 
     this.initIoListeners();
   }

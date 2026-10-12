@@ -6,13 +6,18 @@ type GenerationParams = {
   max: number;
 };
 
+type ClipboardPayload = {
+  textData: string;
+  vector: number[];
+};
+
 type ElectronApi = {
   notifyReady: (component: "object2" | "object3") => void;
   startProcessing: (params: GenerationParams) => void;
   onGenerateData: (callback: (params: GenerationParams) => void) => void;
   writeToClipboard: (text: string) => void;
-  notifyCopiedToClipboard: () => void;
-  onReadClipboardAndDraw: (callback: () => void) => void;
+  notifyCopiedToClipboard: (payload: ClipboardPayload) => void;
+  onReadClipboardAndDraw: (callback: (vector: number[]) => void) => void;
   readFromClipboard: () => string;
 };
 
