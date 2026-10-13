@@ -45,37 +45,36 @@ class Lab6Manager {
     const pos2 = { x: colRightX, y: wy + gap };
     const pos3 = {
       x: colRightX,
-      y: Math.max(wy, Math.min(wy + gap + size2.height + gap, wy + wh - size3.height)),
+      y: Math.max(
+        wy,
+        Math.min(wy + gap + size2.height + gap, wy + wh - size3.height),
+      ),
+    };
+
+    const webPreferences = {
+      webPreferences: {
+        preload: preloadPath,
+        contextIsolation: true,
+        nodeIntegration: false,
+      },
     };
 
     this.winObj1 = new BrowserWindow({
       ...size1,
       ...pos1,
-      webPreferences: {
-        preload: preloadPath,
-        contextIsolation: true,
-        nodeIntegration: false,
-      },
+      ...webPreferences,
     });
 
     this.winObj2 = new BrowserWindow({
       ...size2,
       ...pos2,
-      webPreferences: {
-        preload: preloadPath,
-        contextIsolation: true,
-        nodeIntegration: false,
-      },
+      ...webPreferences
     });
 
     this.winObj3 = new BrowserWindow({
       ...size3,
       ...pos3,
-      webPreferences: {
-        preload: preloadPath,
-        contextIsolation: true,
-        nodeIntegration: false,
-      },
+      ...webPreferences
     });
 
     this.winObj1.loadFile(path.join(__dirname, "html", "indexObj1.html"));
@@ -124,7 +123,10 @@ class Lab6Manager {
       if (component === "object3") {
         this.object3Ready = true;
         if (this.pendingVectorData && this.winObj3) {
-          this.winObj3.webContents.send("read-clipboard-and-draw", this.pendingVectorData);
+          this.winObj3.webContents.send(
+            "read-clipboard-and-draw",
+            this.pendingVectorData,
+          );
           this.pendingVectorData = null;
         }
       }
