@@ -25,15 +25,21 @@ class Object2 {
     return vector;
   }
 
+  // Значення виводяться у декількох стовпчиках та рядках
   renderTable(vector) {
     if (!this.tableValues) return;
     this.tableValues.innerHTML = "";
 
-    vector.forEach((val, index) => {
+    const columns = 5;
+    for (let i = 0; i < vector.length; i += columns) {
       const row = document.createElement("tr");
-      row.innerHTML = `<td>${index}</td><td>${val}</td>`;
+      for (let j = i; j < Math.min(i + columns, vector.length); j++) {
+        const cell = document.createElement("td");
+        cell.textContent = String(vector[j]);
+        row.appendChild(cell);
+      }
       this.tableValues.appendChild(row);
-    });
+    }
   }
 
   processGeneration({ n, min, max }) {

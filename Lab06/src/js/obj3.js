@@ -17,24 +17,28 @@ class Object3 {
   }
 
   readDataFromClipboard() {
-    if (!window.electronAPI) return null;
+    if (!window.electronAPI || !window.electronAPI.readFromClipboard) return null;
     const rawText = window.electronAPI.readFromClipboard();
-    if (!rawText) return null;
+    if (!rawText || rawText.trim() === "") return null;
 
-    const parsed = rawText.trim().split(/\s+/).map(Number);
-    return parsed.length > 0 ? parsed : null;
+    return rawText.trim().split(/\s+/).map(Number);
   }
 
   readAndRender(vectorFromIpc) {
-    let data = vectorFromIpc;
+    // Дані зчитуються з буфера обміну; вектор із IPC використовується лише як запасний варіант
+    let data = this.readDataFromClipboard();
 
-    if (!Array.isArray(data) || data.length === 0) {
-      data = this.readDataFromClipboard();
+    if (!Array.isArray(data) || data.length === 0 || !data.every(Number.isFinite)) {
+      data = Array.isArray(vectorFromIpc) ? vectorFromIpc : null;
     }
 
-    if (Array.isArray(data) && data.length > 0 && !data.some(isNaN)) {
+    if (Array.isArray(data) && data.length > 0 && data.every(Number.isFinite)) {
       this.drawCustomChart(data);
     }
+  }
+
+  formatNumber(value) {
+    return String(Number(value.toFixed(2)));
   }
 
   drawCustomChart(data) {
@@ -52,40 +56,67 @@ class Object3 {
 
     const width = rect.width;
     const height = rect.height;
-    const padding = 40;
+    const padLeft = 55;
+    const padRight = 30;
+    const padTop = 30;
+    const padBottom = 40;
+    const plotW = width - padLeft - padRight;
+    const plotH = height - padTop - padBottom;
 
     ctx.clearRect(0, 0, width, height);
 
     const minVal = Math.min(...data, 0);
     const maxVal = Math.max(...data, 1);
+    const range = maxVal - minVal || 1;
 
-    ctx.strokeStyle = "#cbd5e1";
+    // y — значення вектора, x — індекси елементів
+    const toX = (i) =>
+      data.length === 1 ? padLeft + plotW / 2 : padLeft + (i / (data.length - 1)) * plotW;
+    const toY = (v) => padTop + plotH - ((v - minVal) / range) * plotH;
+    const xAxisY = padTop + plotH;
+
+    // Сітка та числові підписи на осі y
+    const yTicks = 5;
+    ctx.font = "11px sans-serif";
+    ctx.fillStyle = "#64748b";
+    ctx.strokeStyle = "#e2e8f0";
     ctx.lineWidth = 1;
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    for (let k = 0; k <= yTicks; k++) {
+      const v = minVal + (range * k) / yTicks;
+      const y = toY(v);
+      ctx.beginPath();
+      ctx.moveTo(padLeft, y);
+      ctx.lineTo(width - padRight, y);
+      ctx.stroke();
+      ctx.fillText(this.formatNumber(v), padLeft - 6, y);
+    }
+
+    // Осі координат
+    ctx.strokeStyle = "#94a3b8";
+    ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.moveTo(padding, padding);
-    ctx.lineTo(padding, height - padding);
-    ctx.lineTo(width - padding, height - padding);
+    ctx.moveTo(padLeft, padTop);
+    ctx.lineTo(padLeft, xAxisY);
+    ctx.lineTo(width - padRight, xAxisY);
     ctx.stroke();
 
-    ctx.fillStyle = "#64748b";
-    ctx.font = "12px sans-serif";
-    ctx.fillText("y", padding - 15, padding);
-    ctx.fillText("x", width - padding + 10, height - padding + 5);
+    ctx.fillStyle = "#334155";
+    ctx.font = "bold 12px sans-serif";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "alphabetic";
+    ctx.fillText("y", padLeft + 6, padTop - 8);
+    ctx.fillText("x", width - padRight + 8, xAxisY - 4);
 
-    const points = data.map((val, index) => {
-      const x = data.length === 1 
-        ? width / 2 
-        : padding + (index / (data.length - 1)) * (width - 2 * padding);
-      const y = height - padding - ((val - minVal) / (maxVal - minVal || 1)) * (height - 2 * padding);
-      
-      return { x, y, val, index };
-    });
+    // Лінія графіка та заливка під нею
+    const points = data.map((val, index) => ({ x: toX(index), y: toY(val), val, index }));
 
     if (points.length > 1) {
       ctx.beginPath();
-      ctx.moveTo(points[0].x, height - padding);
+      ctx.moveTo(points[0].x, xAxisY);
       points.forEach((p) => ctx.lineTo(p.x, p.y));
-      ctx.lineTo(points[points.length - 1].x, height - padding);
+      ctx.lineTo(points[points.length - 1].x, xAxisY);
       ctx.closePath();
       ctx.fillStyle = "rgba(224, 103, 240, 0.2)";
       ctx.fill();
@@ -100,6 +131,7 @@ class Object3 {
       ctx.stroke();
     }
 
+    // Точки та їх підписи: значення над точкою, індекс (x) під віссю
     points.forEach((p) => {
       ctx.beginPath();
       ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
@@ -109,8 +141,11 @@ class Object3 {
       ctx.fillStyle = "#334155";
       ctx.font = "bold 11px sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText(p.val.toString(), p.x, p.y - 10);
-      ctx.fillText(p.index.toString(), p.x, height - padding + 15);
+      ctx.textBaseline = "alphabetic";
+      ctx.fillText(this.formatNumber(p.val), p.x, p.y - 10);
+
+      ctx.textBaseline = "top";
+      ctx.fillText(p.index.toString(), p.x, xAxisY + 4);
     });
   }
 }

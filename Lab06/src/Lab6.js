@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, clipboard } from "electron";
+import { app, BrowserWindow, ipcMain, clipboard, screen } from "electron";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -35,9 +35,24 @@ class Lab6Manager {
   createWindows() {
     const preloadPath = path.join(__dirname, "js", "preload.cjs");
 
+    // Розташування вікон: Lab6 зліва, Object2 справа згори, Object3 справа під нею.
+    // Так результати Object2 та Object3 видно одночасно.
+    const { x: wx, y: wy, height: wh } = screen.getPrimaryDisplay().workArea;
+    const gap = 20;
+    const size1 = { width: 500, height: 500 };
+    const size2 = { width: 600, height: 400 };
+    const size3 = { width: 800, height: 600 };
+    const colRightX = wx + gap + size1.width + gap;
+    const pos1 = { x: wx + gap, y: wy + gap };
+    const pos2 = { x: colRightX, y: wy + gap };
+    const pos3 = {
+      x: colRightX,
+      y: Math.max(wy, Math.min(wy + gap + size2.height + gap, wy + wh - size3.height)),
+    };
+
     this.winObj1 = new BrowserWindow({
-      width: 500,
-      height: 500,
+      ...size1,
+      ...pos1,
       webPreferences: {
         preload: preloadPath,
         contextIsolation: true,
@@ -46,8 +61,8 @@ class Lab6Manager {
     });
 
     this.winObj2 = new BrowserWindow({
-      width: 600,
-      height: 400,
+      ...size2,
+      ...pos2,
       webPreferences: {
         preload: preloadPath,
         contextIsolation: true,
@@ -56,8 +71,8 @@ class Lab6Manager {
     });
 
     this.winObj3 = new BrowserWindow({
-      width: 800,
-      height: 600,
+      ...size3,
+      ...pos3,
       webPreferences: {
         preload: preloadPath,
         contextIsolation: true,
@@ -77,6 +92,12 @@ class Lab6Manager {
       });
     });
 
+    // Lab6 має залишатися активним вікном, щоб користувач міг повторно запустити роботу.
+    this.winObj3.once("ready-to-show", () => {
+      if (this.winObj1 && !this.winObj1.isDestroyed()) {
+        this.winObj1.focus();
+      }
+    });
     if (this.winObj1) {
       this.winObj1.focus();
     }
