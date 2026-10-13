@@ -68,13 +68,11 @@ class Object3 {
     const maxVal = Math.max(...data, 1);
     const range = maxVal - minVal || 1;
 
-    // y — значення вектора, x — індекси елементів
     const toX = (i) =>
       data.length === 1 ? padLeft + plotW / 2 : padLeft + (i / (data.length - 1)) * plotW;
     const toY = (v) => padTop + plotH - ((v - minVal) / range) * plotH;
     const xAxisY = padTop + plotH;
 
-    // Сітка та числові підписи на осі y
     const yTicks = 5;
     ctx.font = "11px sans-serif";
     ctx.fillStyle = "#64748b";
@@ -92,7 +90,6 @@ class Object3 {
       ctx.fillText(this.formatNumber(v), padLeft - 6, y);
     }
 
-    // Осі координат
     ctx.strokeStyle = "#94a3b8";
     ctx.lineWidth = 1.5;
     ctx.beginPath();
@@ -108,7 +105,6 @@ class Object3 {
     ctx.fillText("y", padLeft + 6, padTop - 8);
     ctx.fillText("x", width - padRight + 8, xAxisY - 4);
 
-    // Лінія графіка та заливка під нею
     const points = data.map((val, index) => ({ x: toX(index), y: toY(val), val, index }));
 
     if (points.length > 1) {
@@ -130,7 +126,6 @@ class Object3 {
       ctx.stroke();
     }
 
-    // Точки та їх підписи: значення над точкою, індекс (x) під віссю
     points.forEach((p) => {
       ctx.beginPath();
       ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
