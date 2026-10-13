@@ -25,7 +25,6 @@ class Object2 {
     return vector;
   }
 
-  // Значення виводяться у декількох стовпчиках та рядках
   renderTable(vector) {
     if (!this.tableValues) return;
     this.tableValues.innerHTML = "";

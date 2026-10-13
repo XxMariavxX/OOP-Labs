@@ -35,8 +35,6 @@ class Lab6Manager {
   createWindows() {
     const preloadPath = path.join(__dirname, "js", "preload.cjs");
 
-    // Розташування вікон: Lab6 зліва, Object2 справа згори, Object3 справа під нею.
-    // Так результати Object2 та Object3 видно одночасно.
     const { x: wx, y: wy, height: wh } = screen.getPrimaryDisplay().workArea;
     const gap = 20;
     const size1 = { width: 500, height: 500 };
@@ -92,12 +90,6 @@ class Lab6Manager {
       });
     });
 
-    // Lab6 має залишатися активним вікном, щоб користувач міг повторно запустити роботу.
-    this.winObj3.once("ready-to-show", () => {
-      if (this.winObj1 && !this.winObj1.isDestroyed()) {
-        this.winObj1.focus();
-      }
-    });
     if (this.winObj1) {
       this.winObj1.focus();
     }

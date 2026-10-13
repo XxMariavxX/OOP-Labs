@@ -25,7 +25,6 @@ class Object3 {
   }
 
   readAndRender(vectorFromIpc) {
-    // Дані зчитуються з буфера обміну; вектор із IPC використовується лише як запасний варіант
     let data = this.readDataFromClipboard();
 
     if (!Array.isArray(data) || data.length === 0 || !data.every(Number.isFinite)) {
