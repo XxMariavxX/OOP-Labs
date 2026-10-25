@@ -1,31 +1,33 @@
 export class Analysis {
   constructor() {
     this.files = [];
+    this.cppFilesCount = 0;
   }
 
-  finder() {
-    const input = document.getElementById("fileInput");
-    const listing = document.getElementById("listing");
-    input.type = "file";
-    input.webkitEntries = true;
-    input.multiple = true;
+  finder(files) {
+    if (!files) return [];
 
-    input.addEventListener("change", (event) => {
-      const files = Array.from(event.target.files);
-      console.log("Selected files:", files);
+    this.files = Array.from(files);
+
+    const cppFiles = this.files.filter(
+      (f) =>
+        f.name.endsWith(".cpp") ||
+        f.name.endsWith(".h") ||
+        f.name.endsWith(".rc")
+    );
+
+    this.cppFilesCount = cppFiles.length;
+
+    const listing = document.getElementById("listing");
+    if (listing) {
       listing.innerHTML = "";
-      files.forEach((file) => {
+      cppFiles.forEach((file) => {
         const li = document.createElement("li");
         li.textContent = file.name;
         listing.appendChild(li);
       });
-    });
+    }
 
-    const cppFiles = files.filter(
-      (f) =>
-        f.name.endsWith(".cpp") ||
-        f.name.endsWith(".h") ||
-        f.name.endsWith(".rc"),
-    );
+    return cppFiles;
   }
 }

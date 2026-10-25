@@ -1,0 +1,46 @@
+@use 'variables' as *;
+
+.dropzone {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  max-width: 500px;
+  height: 220px;
+  border: 2px dashed $dropzone-border;
+  border-radius: 12px;
+  background-color: $dropzone-bg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10;
+  pointer-events: auto;
+
+  &--active {
+    border-color: $btn-bg;
+    background-color: rgba(180, 122, 154, 0.25);
+    transform: translate(-50%, -50%) scale(1.02);
+  }
+
+  &--hidden {
+    display: none !important;
+  }
+
+  &__content {
+    text-align: center;
+    pointer-events: none;
+  }
+
+  &__icon {
+    font-size: 44px;
+    margin-bottom: 10px;
+  }
+
+  &__text {
+    color: $text-light;
+    font-size: 16px;
+    font-weight: 500;
+  }
+}

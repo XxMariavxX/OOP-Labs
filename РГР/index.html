@@ -5,19 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./src/styles/style.css" />
     <link rel="icon" type="image/x-icon" href="./images/ico.jpg" />
-    
+
     <title>РГР</title>
   </head>
   <body>
     <main class="main">
       <div class="main__container">
-    <input type="file" class="main__file-input" id="fileInput" webkitdirectory multiple/>
-    </div>
+        <label class="main__btn">
+          Вибрати папку
+          <input
+            type="file"
+            class="main__folder-input"
+            id="folderInput"
+            webkitdirectory
+            multiple
+          />
+        </label>
+        <span class="main__status" id="status">Папку не обрано</span>
+      </div>
 
-    <div class="main__canvas-wrapper">
-      <canvas class="main__canvas" id="myCanvas"></canvas>
-    </div>
-  </main>
-  <script type="module" src="./src/main.js"></script>
+      <div class="main__canvas-wrapper" id="canvasWrapper">
+        <div class="dropzone" id="dropZone">
+          <div class="dropzone__content">
+            <div class="dropzone__icon">📁</div>
+            <p class="dropzone__text">Перетягніть папку з проєктом сюди</p>
+          </div>
+        </div>
+
+        <canvas class="main__canvas" id="myCanvas"></canvas>
+      </div>
+    </main>
+
+    <script type="module" src="./src/main.js"></script>
   </body>
 </html>
