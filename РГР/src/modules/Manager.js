@@ -1,7 +1,6 @@
 export class Manager {
-  constructor(analysis, viewer) {
+  constructor(analysis) {
     this.analysis = analysis;
-    this.viewer = viewer;
 
     this.dropArea = document.getElementById("canvasWrapper");
     this.dropZone = document.getElementById("dropZone");
@@ -19,20 +18,20 @@ export class Manager {
       });
     }
 
-    const targetZone = this.dropArea || this.dropZone;
+    const zones = [this.dropZone, this.dropArea].filter(Boolean);
 
-    if (targetZone) {
-      targetZone.addEventListener("dragover", (e) => {
+    zones.forEach((zone) => {
+      zone.addEventListener("dragover", (e) => {
         e.preventDefault();
         if (this.dropZone) this.dropZone.classList.add("dropzone--active");
       });
 
-      targetZone.addEventListener("dragleave", (e) => {
+      zone.addEventListener("dragleave", (e) => {
         e.preventDefault();
         if (this.dropZone) this.dropZone.classList.remove("dropzone--active");
       });
 
-      targetZone.addEventListener("drop", async (e) => {
+      zone.addEventListener("drop", async (e) => {
         e.preventDefault();
         if (this.dropZone) this.dropZone.classList.remove("dropzone--active");
 
@@ -53,7 +52,7 @@ export class Manager {
 
         await this.processFiles(files);
       });
-    }
+    });
   }
 
   traverseFileTree(item, files) {
@@ -80,25 +79,17 @@ export class Manager {
   async processFiles(files) {
     if (!files || files.length === 0) {
       if (this.status) {
-        this.status.textContent = "Помилка: Файли не обрано або папка порожня";
+        this.status.textContent = "Помилка: Файли не обрано або папка порожня або не містить C++ файлів.";
       }
       return;
     }
 
     if (this.status) this.status.textContent = "Обробка...";
 
-    const hierarchy = this.analysis.finder(files);
+    this.analysis.finder(files);
 
     if (this.status) {
       this.status.textContent = `Проаналізовано C++ файлів: ${this.analysis.cppFilesCount}`;
-    }
-
-    if (this.dropZone) {
-      this.dropZone.classList.add("dropzone--hidden");
-    }
-
-    if (this.viewer) {
-      this.viewer.render(hierarchy);
     }
   }
 }
