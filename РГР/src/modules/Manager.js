@@ -86,7 +86,7 @@ export class Manager {
 
     if (this.status) this.status.textContent = "Обробка...";
 
-    this.analysis.finder(files);
+    await this.analysis.finder(files);
 
     if (this.status) {
       this.status.textContent = `Проаналізовано C++ файлів: ${this.analysis.cppFilesCount}`;
