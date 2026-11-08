@@ -31,7 +31,6 @@ export class Analysis {
       fileMap.set(file.name, node);
     }
 
-    // зберігаємо мапу залежностей
     this.dependencies.clear();
     for (const node of fileNodes) {
       this.dependencies.set(node.name, node.includes);
@@ -87,19 +86,8 @@ export class Analysis {
 
     this.cppFilesCount = cppFiles.length;
 
-    // парсимо файли і рахуємо рівні
     const { fileNodes, fileMap } = await this.parseFiles(this.files);
     this.fileNodes = this.calculateLevels(fileNodes, fileMap);
-
-    const listing = document.getElementById("listing");
-    if (listing) {
-      listing.innerHTML = "";
-      cppFiles.forEach((file) => {
-        const li = document.createElement("li");
-        li.textContent = file.name;
-        listing.appendChild(li);
-      });
-    }
 
     return this.fileNodes;
   }

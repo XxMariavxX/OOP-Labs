@@ -4,26 +4,36 @@ export class Viewer {
     this.ctx = this.canvas ? this.canvas.getContext("2d") : null;
   }
 
-  render(hierarchy) {
-    if (!this.canvas || !this.ctx) return;
-
-    const files = Array.isArray(hierarchy) ? hierarchy : [];
-    const wrapper = this.canvas.parentElement;
-    const width = (wrapper && wrapper.clientWidth) || 800;
-    const height = Math.max(200, files.length * 18 + 40);
-
-    this.canvas.width = width;
-    this.canvas.height = height;
+  render(fileNodes) {
+    if (!this.canvas || !this.ctx || !fileNodes || fileNodes.length === 0) return;
 
     const ctx = this.ctx;
-    ctx.clearRect(0, 0, width, height);
-    ctx.fillStyle = "#F3E9EC";
-    ctx.font = "bold 16px system-ui, sans-serif";
-    ctx.fillText(`Знайдено C++ файлів: ${files.length}`, 20, 24);
 
-    ctx.font = "14px system-ui, sans-serif";
-    files.forEach((file, i) => {
-      ctx.fillText(file.name, 20, 48 + i * 18);
-    });
+    const levels = new Map();
+    for (const node of fileNodes) {
+      if (!levels.has(node.level)) levels.set(node.level, []);
+      levels.get(node.level).push(node);
+    }
+
+    const boxW = 160;
+    const boxH = 60;
+    const gapX = 40;
+    const gapY = 80;
+    const padding = 40;
+
+    const maxFilesInLevel = Math.max(...[...levels.values()].map((l) => l.length));
+    const levelCount = levels.size;
+
+    const canvasW = Math.max(600, maxFilesInLevel * (boxW + gapX) + padding * 2);
+    const canvasH = Math.max(400, levelCount * (boxH + gapY) + padding * 2);
+
+    this.canvas.width = canvasW;
+    this.canvas.height = canvasH;
+
+    ctx.clearRect(0, 0, canvasW, canvasH);
+
+    // TODO: 3. Малювати прямокутники (назва + #include)
+    // TODO: 4. Малювати стрілки (з підписом "include")
+    // TODO: 5. Скролінг працює автоматично
   }
 }

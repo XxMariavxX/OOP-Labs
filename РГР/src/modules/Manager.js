@@ -1,6 +1,7 @@
 export class Manager {
-  constructor(analysis) {
+  constructor(analysis, viewer) {
     this.analysis = analysis;
+    this.viewer = viewer;
 
     this.dropArea = document.getElementById("canvasWrapper");
     this.dropZone = document.getElementById("dropZone");
@@ -90,6 +91,10 @@ export class Manager {
 
     if (this.status) {
       this.status.textContent = `Проаналізовано C++ файлів: ${this.analysis.cppFilesCount}`;
+    }
+
+    if (this.viewer) {
+      this.viewer.render(this.analysis.fileNodes);
     }
   }
 }
