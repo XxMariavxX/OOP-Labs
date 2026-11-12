@@ -4,6 +4,13 @@ export class Viewer {
     this.ctx = this.canvas ? this.canvas.getContext("2d") : null;
   }
 
+  reset() {
+    if (this.canvas) {
+      this.canvas.width = 0;
+      this.canvas.height = 0;
+    }
+  }
+
   render(fileNodes) {
     if (!this.canvas || !this.ctx || !fileNodes || fileNodes.length === 0) return;
 

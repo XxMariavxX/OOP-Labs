@@ -18,12 +18,21 @@ export class Analysis {
     );
 
     for (const file of filtered) {
-      const text = await file.text();
+      let text;
+      try {
+        text = await file.text();
+      } catch (err) {
+        throw new Error(`Не вдалося прочитати файл "${file.name}": ${err && err.message ? err.message : err}`);
+      }
       const includes = [];
       const regex = /#include\s+["<]([^">]+)[">]/g;
       let match;
-      while ((match = regex.exec(text)) !== null) {
-        includes.push(match[1]);
+      try {
+        while ((match = regex.exec(text)) !== null) {
+          includes.push(match[1]);
+        }
+      } catch (err) {
+        throw new Error(`Помилка аналізу файлу "${file.name}": ${err && err.message ? err.message : err}`);
       }
 
       const node = { name: file.name, includes, level: 0 };
@@ -73,7 +82,7 @@ export class Analysis {
   }
 
   async finder(files) {
-    if (!files) return [];
+    if (!files) throw new Error("Список файлів порожній.");
 
     this.files = Array.from(files);
 
@@ -86,8 +95,22 @@ export class Analysis {
 
     this.cppFilesCount = cppFiles.length;
 
-    const { fileNodes, fileMap } = await this.parseFiles(this.files);
-    this.fileNodes = this.calculateLevels(fileNodes, fileMap);
+    if (cppFiles.length === 0) {
+      throw new Error("Не знайдено C++ файлів (.cpp, .h, .rc).");
+    }
+
+    let result;
+    try {
+      result = await this.parseFiles(this.files);
+    } catch (err) {
+      throw err instanceof Error ? err : new Error(String(err));
+    }
+
+    try {
+      this.fileNodes = this.calculateLevels(result.fileNodes, result.fileMap);
+    } catch (err) {
+      throw new Error(`Помилка побудови графа залежностей: ${err && err.message ? err.message : err}`);
+    }
 
     return this.fileNodes;
   }
