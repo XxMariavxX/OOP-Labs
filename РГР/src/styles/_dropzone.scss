@@ -5,8 +5,10 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 320px;
-    height: 48px;
+    width: 100%;
+    max-width: 320px;
+    min-height: 48px;
+    height: auto;
     border: 2px dashed $dropzone-border;
     border-radius: 6px;
     background-color: $dropzone-bg;
@@ -17,7 +19,7 @@
     &:hover,
     &.dropzone--active {
       border-color: $btn-bg;
-      background-color: rgba(180, 122, 154, 0.25);
+      background-color: rgba(193, 106, 154, 0.25);
     }
 
     .dropzone__icon {
@@ -28,7 +30,7 @@
 
     .dropzone__text {
       color: $text-muted;
-      font-size: 12px;
+      font-size: 16px;
       font-weight: 500;
       text-align: center;
       pointer-events: none;

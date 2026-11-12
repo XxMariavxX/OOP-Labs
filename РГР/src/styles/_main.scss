@@ -18,14 +18,22 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  position: relative;
 
   &__container {
-    height: $panel-height;
+    min-height: $panel-height;
+    height: auto;
     background-color: $bg-panel;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 20px;
-    padding: 0 20px;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 12px 20px;
+
+    @media (max-width: 480px) {
+      justify-content: center;
+    }
     border-bottom: 1px solid $border-color;
   }
 
@@ -36,10 +44,10 @@ body {
   &__btn {
     background-color: $btn-bg;
     color: $bg-page;
-    padding: 8px 16px;
+    padding: 10px 20px;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 18px;
     font-weight: 600;
     transition: background-color 0.2s ease;
 
@@ -48,9 +56,17 @@ body {
     }
   }
 
+  &__status-bar {
+    padding: 6px 20px;
+    text-align: center;
+    background-color: $bg-panel;
+    border-bottom: 1px solid $border-color;
+  }
+
   &__status {
-    color: $text-muted;
+    color: $text-light;
     font-size: 14px;
+    white-space: normal;
   }
 
   &__or {
@@ -58,13 +74,18 @@ body {
     font-size: 13px;
     font-weight: 500;
     flex-shrink: 0;
+
+    @media (max-width: 480px) {
+      flex-basis: 100%;
+      text-align: center;
+    }
   }
 
   &__canvas-wrapper {
     flex: 1;
     position: relative;
     overflow: auto;
-    background-color: $bg-page;
+    background-color: #140B17;
   }
 
   &__canvas {
