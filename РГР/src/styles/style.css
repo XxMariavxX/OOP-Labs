@@ -8,7 +8,7 @@ body {
   height: 100vh;
   overflow: hidden;
   font-family: system-ui, -apple-system, sans-serif;
-  background-color: #150E19;
+  background-color: #1F1225;
   color: #F3E9EC;
 }
 
@@ -16,14 +16,25 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  position: relative;
 }
 .main__container {
-  height: 80px;
-  background-color: #2C1B2F;
+  min-height: 80px;
+  height: auto;
+  background-color: #2E1F35;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 20px;
-  padding: 0 20px;
+  justify-content: flex-start;
+  gap: 12px;
+  padding: 12px 20px;
+}
+@media (max-width: 480px) {
+  .main__container {
+    justify-content: center;
+  }
+}
+.main__container {
   border-bottom: 1px solid #5E3A5C;
 }
 .main__folder-input {
@@ -31,20 +42,27 @@ body {
 }
 .main__btn {
   background-color: #82527D;
-  color: #150E19;
-  padding: 8px 16px;
+  color: #1F1225;
+  padding: 10px 20px;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 600;
   transition: background-color 0.2s ease;
 }
 .main__btn:hover {
   background-color: #9E6898;
 }
+.main__status-bar {
+  padding: 6px 20px;
+  text-align: center;
+  background-color: #2E1F35;
+  border-bottom: 1px solid #5E3A5C;
+}
 .main__status {
-  color: #D3A7C0;
+  color: #F3E9EC;
   font-size: 14px;
+  white-space: normal;
 }
 .main__or {
   color: #D3A7C0;
@@ -52,11 +70,17 @@ body {
   font-weight: 500;
   flex-shrink: 0;
 }
+@media (max-width: 480px) {
+  .main__or {
+    flex-basis: 100%;
+    text-align: center;
+  }
+}
 .main__canvas-wrapper {
   flex: 1;
   position: relative;
   overflow: auto;
-  background-color: #150E19;
+  background-color: #140B17;
 }
 .main__canvas {
   display: block;
@@ -66,8 +90,10 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 320px;
-  height: 48px;
+  width: 100%;
+  max-width: 320px;
+  min-height: 48px;
+  height: auto;
   border: 2px dashed #B47A9A;
   border-radius: 6px;
   background-color: rgba(94, 58, 92, 0.35);
@@ -77,7 +103,7 @@ body {
 }
 .dropzone--compact:hover, .dropzone--compact.dropzone--active {
   border-color: #82527D;
-  background-color: rgba(180, 122, 154, 0.25);
+  background-color: rgba(193, 106, 154, 0.25);
 }
 .dropzone--compact .dropzone__icon {
   font-size: 18px;
@@ -86,7 +112,7 @@ body {
 }
 .dropzone--compact .dropzone__text {
   color: #D3A7C0;
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 500;
   text-align: center;
   pointer-events: none;
