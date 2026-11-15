@@ -84,6 +84,9 @@ export class Analysis {
   async finder(files) {
     if (!files) throw new Error("Список файлів порожній.");
 
+    // Очищаємо попередні дані при новому виборі
+    this.fileNodes = [];
+    this.dependencies.clear();
     this.files = Array.from(files);
 
     const cppFiles = this.files.filter(

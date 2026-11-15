@@ -15,12 +15,16 @@ export class Manager {
     if (this.folderInput) {
       this.folderInput.addEventListener("change", async (e) => {
         if (this.status) this.status.textContent = "Читання файлів...";
-        // yield, щоб браузер встиг показати повідомлення
-        await new Promise((r) => setTimeout(r, 50));
-        let files = Array.from(e.target.files || []);
+        await new Promise((r) => setTimeout(r, 200));
 
-        // Fallback: якщо браузер не повернув файлів через webkitdirectory,
-        // використовуємо webkitEntries (рекурсивний обхід)
+        // Збираємо тільки .cpp/.h/.rc без створення масиву з усіх файлів
+        let files = [];
+        const raw = e.target.files || [];
+        for (let i = 0; i < raw.length; i++) {
+          const f = raw[i];
+          if (/\.(cpp|h|rc)$/i.test(f.name)) files.push(f);
+        }
+
         if (files.length === 0 && e.target.webkitEntries && e.target.webkitEntries.length > 0) {
           const collected = [];
           for (const entry of e.target.webkitEntries) {
@@ -29,7 +33,11 @@ export class Manager {
           files = collected;
         }
 
-        await this.processFiles(files);
+        const folderName = files.length > 0 && files[0].webkitRelativePath
+          ? files[0].webkitRelativePath.split("/")[0]
+          : (files.length > 0 ? files[0].name : "");
+
+        await this.processFiles(files, folderName);
       });
     }
 
@@ -49,23 +57,24 @@ export class Manager {
       zone.addEventListener("drop", async (e) => {
         e.preventDefault();
         if (this.dropZone) this.dropZone.classList.remove("dropzone--active");
-
-        const items = Array.from(e.dataTransfer.items || []);
+        const handles = Array.from(e.dataTransfer.items || [])
+          .filter((item) => item.kind === "file")
+          .map((item) => ({
+            entry: item.webkitGetAsEntry ? item.webkitGetAsEntry() : null,
+            file: item.getAsFile(),
+          }));
+        const folderName = handles[0] && handles[0].entry ? handles[0].entry.name : "";
         const files = [];
 
         if (this.status) this.status.textContent = "Читання файлів...";
         await new Promise((r) => setTimeout(r, 50));
 
         try {
-          for (const item of items) {
-            if (item.kind === "file") {
-              const entry = item.webkitGetAsEntry ? item.webkitGetAsEntry() : null;
-              if (entry) {
-                await this.traverseFileTree(entry, files);
-              } else {
-                const file = item.getAsFile();
-                if (file) files.push(file);
-              }
+          for (const { entry, file } of handles) {
+            if (entry) {
+              await this.traverseFileTree(entry, files);
+            } else if (file) {
+              files.push(file);
             }
           }
         } catch (err) {
@@ -76,13 +85,17 @@ export class Manager {
           return;
         }
 
-        await this.processFiles(files);
+        await this.processFiles(files, folderName);
       });
     });
   }
 
   async traverseFileTree(item, files) {
     if (item.isFile) {
+      const name = item.name || "";
+      if (!/\.(cpp|h|rc)$/i.test(name)) {
+        return; // пропускаємо непотрібні файли
+      }
       return new Promise((resolve, reject) => {
         item.file(
           (file) => {
@@ -111,7 +124,7 @@ export class Manager {
     }
   }
 
-  async processFiles(files) {
+  async processFiles(files, folderName = "") {
     if (this.viewer) this.viewer.reset();
     try {
       const cppFiles = (files || []).filter(
@@ -126,12 +139,12 @@ export class Manager {
       }
 
       if (this.status) this.status.textContent = `Обробка... (знайдено файлів: ${files.length})`;
-      await new Promise((r) => setTimeout(r, 50));
+      await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 100)));
 
       await this.analysis.finder(files);
 
       if (this.status) {
-        this.status.textContent = `Проаналізовано C++ файлів: ${this.analysis.cppFilesCount}`;
+        this.status.textContent = `Папка "${folderName}": C++ файлів ${this.analysis.cppFilesCount}`;
       }
 
       if (this.status) this.status.textContent = "Відображення...";
@@ -145,6 +158,7 @@ export class Manager {
       if (this.status) {
         this.status.textContent = `Помилка: ${message}`;
       }
+      if (this.viewer) this.viewer.reset();
       console.error("processFiles error:", err);
     }
   }
