@@ -17,7 +17,6 @@ export class Manager {
         if (this.status) this.status.textContent = "Читання файлів...";
         await new Promise((r) => setTimeout(r, 200));
 
-        // Збираємо тільки .cpp/.h/.rc без створення масиву з усіх файлів
         let files = [];
         const raw = e.target.files || [];
         for (let i = 0; i < raw.length; i++) {

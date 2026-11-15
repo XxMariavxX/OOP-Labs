@@ -10,7 +10,6 @@ export class Viewer {
     this.canvas.height = 0;
   }
 
-  // Розбиває текст на рядки за шириною прямокутника
   wrapText(ctx, text, maxWidth) {
     const words = text.split(/,\s*/);
     const lines = [];
