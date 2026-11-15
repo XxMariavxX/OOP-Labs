@@ -42,6 +42,8 @@ body {
   }
 
   &__btn {
+    border: none;
+    font-family: inherit;
     background-color: $btn-bg;
     color: $bg-page;
     padding: 10px 20px;

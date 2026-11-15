@@ -41,6 +41,8 @@ body {
   display: none !important;
 }
 .main__btn {
+  border: none;
+  font-family: inherit;
   background-color: #82527D;
   color: #1F1225;
   padding: 10px 20px;

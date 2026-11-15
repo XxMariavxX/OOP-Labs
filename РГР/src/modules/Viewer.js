@@ -43,9 +43,11 @@ export class Viewer {
 
     const boxW = 260;
     const gapX = 40;
-    const gapY = 80;
+    const gapY = 30;       // gap between rows within a level
+    const levelGapY = 50;  // gap between levels
     const padding = 40;
     const lineHeight = 14;
+    const perRow = 8;      // max nodes per row (wraps levels into multiple rows)
 
     const nodeHeights = new Map();
     for (const node of fileNodes) {
@@ -57,52 +59,122 @@ export class Viewer {
       nodeHeights.set(node.name, { h, lines });
     }
 
-    const maxFilesInLevel = Math.max(...[...levels.values()].map((l) => l.length));
-    const levelCount = levels.size;
-
-    const canvasW = Math.max(600, maxFilesInLevel * (boxW + gapX) + padding * 2);
-    const canvasH = Math.max(400, levelCount * (200 + gapY) + padding * 2);
-
-    this.canvas.width = canvasW;
-    this.canvas.height = canvasH;
-
-    ctx.clearRect(0, 0, canvasW, canvasH);
-
-    const positions = new Map();
     const sortedLevels = [...levels.keys()].sort((a, b) => a - b);
+    const positions = new Map();
+
+    // First pass: compute canvas size
+    let totalHeight = padding * 2;
+    let maxRowWidth = 0;
+    const levelLayouts = new Map(); // level -> array of rows, each row = array of nodes
 
     for (const level of sortedLevels) {
       const nodes = levels.get(level);
-      const boxHs = nodes.map((n) => nodeHeights.get(n.name).h);
-      const maxH = Math.max(...boxHs);
-      const y = canvasH - padding - level * (maxH + gapY) - maxH;
-      const totalW = nodes.length * (boxW + gapX) - gapX;
-      const startX = (canvasW - totalW) / 2;
+      const rows = [];
+      for (let i = 0; i < nodes.length; i += perRow) {
+        rows.push(nodes.slice(i, i + perRow));
+      }
+      levelLayouts.set(level, rows);
 
-      nodes.forEach((node, i) => {
-        const x = startX + i * (boxW + gapX);
-        const { h, lines } = nodeHeights.get(node.name);
-        positions.set(node.name, { x, y, w: boxW, h });
+      const levelH = rows.length * (nodeHeights.get(nodes[0].name).h + gapY) - gapY;
+      totalHeight += levelH + levelGapY;
+      for (const row of rows) {
+        const w = row.length * (boxW + gapX) - gapX;
+        if (w > maxRowWidth) maxRowWidth = w;
+      }
+    }
+    totalHeight -= levelGapY; // remove trailing gap
+    const canvasW = Math.max(600, maxRowWidth + padding * 2);
+    const canvasH = Math.max(400, totalHeight);
 
-        ctx.strokeStyle = "#82527D";
-        ctx.lineWidth = 2;
-        ctx.fillStyle = "#2C1B2F";
-        ctx.fillRect(x, y, boxW, h);
-        ctx.strokeRect(x, y, boxW, h);
+    this.canvas.width = canvasW;
+    this.canvas.height = canvasH;
+    ctx.clearRect(0, 0, canvasW, canvasH);
 
-        ctx.fillStyle = "#F3E9EC";
-        ctx.font = "bold 13px system-ui, sans-serif";
-        ctx.textAlign = "center";
-        ctx.fillText(node.name, x + boxW / 2, y + 16);
+    // Second pass: draw, bottom-up
+    let currentY = canvasH - padding;
+    for (let li = sortedLevels.length - 1; li >= 0; li--) {
+      const level = sortedLevels[li];
+      const rows = levelLayouts.get(level);
+      // draw rows from bottom up within level
+      for (let r = rows.length - 1; r >= 0; r--) {
+        const row = rows[r];
+        const rowH = Math.max(...row.map((n) => nodeHeights.get(n.name).h));
+        const y = currentY - rowH;
+        const totalW = row.length * (boxW + gapX) - gapX;
+        const startX = (canvasW - totalW) / 2;
 
-        ctx.font = "11px system-ui, sans-serif";
-        ctx.fillStyle = "#D3A7C0";
-        lines.forEach((line, idx) => {
-          ctx.fillText(line, x + boxW / 2, y + 32 + idx * lineHeight);
+        row.forEach((node, i) => {
+          const x = startX + i * (boxW + gapX);
+          const { h, lines } = nodeHeights.get(node.name);
+          positions.set(node.name, { x, y, w: boxW, h });
+
+          ctx.strokeStyle = "#82527D";
+          ctx.lineWidth = 2;
+          ctx.fillStyle = "#2C1B2F";
+          ctx.fillRect(x, y, boxW, h);
+          ctx.strokeRect(x, y, boxW, h);
+
+          ctx.fillStyle = "#F3E9EC";
+          ctx.font = "bold 13px system-ui, sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText(node.name, x + boxW / 2, y + 16);
+
+          ctx.font = "11px system-ui, sans-serif";
+          ctx.fillStyle = "#D3A7C0";
+          lines.forEach((line, idx) => {
+            ctx.fillText(line, x + boxW / 2, y + 32 + idx * lineHeight);
+          });
         });
-      });
+
+        currentY = y - gapY;
+      }
+      currentY -= levelGapY - gapY;
     }
 
-    // TODO: 4. Малювати стрілки (з підписом "include")
+    // 4. Стрілки
+    ctx.strokeStyle = "#9E6898";
+    ctx.fillStyle = "#9E6898";
+    ctx.lineWidth = 1.5;
+    ctx.font = "10px system-ui, sans-serif";
+    ctx.textAlign = "center";
+
+    for (const node of fileNodes) {
+      const from = positions.get(node.name);
+      if (!from) continue;
+
+      for (const inc of node.includes) {
+        const to = positions.get(inc);
+        if (!to) continue;
+
+        const x1 = from.x + from.w / 2;
+        const y1 = from.y;
+        const x2 = to.x + to.w / 2;
+        const y2 = to.y + to.h;
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+
+        const angle = Math.atan2(y2 - y1, x2 - x1);
+        const arrowSize = 8;
+        ctx.beginPath();
+        ctx.moveTo(x2, y2);
+        ctx.lineTo(
+          x2 - arrowSize * Math.cos(angle - Math.PI / 6),
+          y2 - arrowSize * Math.sin(angle - Math.PI / 6)
+        );
+        ctx.lineTo(
+          x2 - arrowSize * Math.cos(angle + Math.PI / 6),
+          y2 - arrowSize * Math.sin(angle + Math.PI / 6)
+        );
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = "#D3A7C0";
+        ctx.fillText("include", (x1 + x2) / 2, (y1 + y2) / 2 - 4);
+        ctx.fillStyle = "#9E6898";
+      }
+    }
   }
 }

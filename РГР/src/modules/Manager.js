@@ -12,10 +12,11 @@ export class Manager {
   }
 
   initEv() {
+    this.initPicker();
+
     if (this.folderInput) {
       this.folderInput.addEventListener("change", async (e) => {
         if (this.status) this.status.textContent = "Читання файлів...";
-        await new Promise((r) => setTimeout(r, 200));
 
         let files = [];
         const raw = e.target.files || [];
@@ -66,7 +67,6 @@ export class Manager {
         const files = [];
 
         if (this.status) this.status.textContent = "Читання файлів...";
-        await new Promise((r) => setTimeout(r, 50));
 
         try {
           for (const { entry, file } of handles) {
@@ -89,6 +89,50 @@ export class Manager {
     });
   }
 
+  initPicker() {
+    const pickBtn = document.getElementById("pickBtn");
+    if (!pickBtn) return;
+
+    pickBtn.addEventListener("click", async () => {
+      if (!window.showDirectoryPicker) {
+        this.folderInput.click();
+        return;
+      }
+
+      let dirHandle;
+      try {
+        dirHandle = await window.showDirectoryPicker();
+      } catch (err) {
+        return; // користувач скасував вибір
+      }
+
+      if (this.status) this.status.textContent = "Читання файлів...";
+      this.scanned = 0;
+      const files = [];
+      try {
+        await this.collectHandle(dirHandle, files);
+      } catch (err) {
+        if (this.status) this.status.textContent = `Помилка: ${err && err.message ? err.message : err}`;
+        return;
+      }
+
+      await this.processFiles(files, dirHandle.name);
+    });
+  }
+
+  async collectHandle(dirHandle, files) {
+    for await (const handle of dirHandle.values()) {
+      if (++this.scanned % 500 === 0) {
+        await new Promise((r) => setTimeout(r, 0));
+      }
+      if (handle.kind === "directory") {
+        await this.collectHandle(handle, files);
+      } else if (/\.(cpp|h|rc)$/i.test(handle.name)) {
+        files.push(await handle.getFile());
+      }
+    }
+  }
+
   async traverseFileTree(item, files) {
     if (item.isFile) {
       const name = item.name || "";
@@ -107,6 +151,10 @@ export class Manager {
     }
 
     if (item.isDirectory) {
+      const ignored = new Set(["build", "node_modules", ".git", "out", "dist", "debug", "release", "x64", "x86"]);
+      if (ignored.has((item.name || "").toLowerCase())) {
+        return; // пропускаємо службові папки
+      }
       const dirReader = item.createReader();
       const readBatch = () =>
         new Promise((res, rej) => {
@@ -138,16 +186,14 @@ export class Manager {
       }
 
       if (this.status) this.status.textContent = `Обробка... (знайдено файлів: ${files.length})`;
-      await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 100)));
 
-      await this.analysis.finder(files);
+      await this.analysis.finder(files, (msg) => {
+        if (this.status) this.status.textContent = msg;
+      });
 
       if (this.status) {
         this.status.textContent = `Папка "${folderName}": C++ файлів ${this.analysis.cppFilesCount}`;
       }
-
-      if (this.status) this.status.textContent = "Відображення...";
-      await new Promise((r) => setTimeout(r, 0));
 
       if (this.viewer) {
         this.viewer.render(this.analysis.fileNodes);
