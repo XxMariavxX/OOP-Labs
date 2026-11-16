@@ -192,7 +192,7 @@ export class Manager {
       });
 
       if (this.status) {
-        this.status.textContent = `Папка "${folderName}": C++ файлів ${this.analysis.cppFilesCount}`;
+        this.status.textContent = `Папка "${folderName}":   C++ файлів ${this.analysis.cppFilesCount}`;
       }
 
       if (this.viewer) {
