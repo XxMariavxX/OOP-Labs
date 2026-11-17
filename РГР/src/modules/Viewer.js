@@ -15,6 +15,7 @@ export class Viewer {
           this.drawScene();
         }
       });
+      window.addEventListener("resize", () => this.handleResize());
     }
   }
 
@@ -94,6 +95,14 @@ export class Viewer {
     this.calculateLayout(fileNodes);
     this.drawScene();
     this.scrollToTopRow();
+  }
+
+  handleResize() {
+    if (!this.canvas || !this.ctx || this.lastNodes.length === 0) return;
+    this.hoveredNodeId = null;
+    if (this.canvas) this.canvas.style.cursor = "default";
+    this.calculateLayout(this.lastNodes);
+    this.drawScene();
   }
 
   scrollToTopRow() {
@@ -186,8 +195,17 @@ export class Viewer {
       0
     );
 
-    const canvasW = Math.max(800, maxFilesInLevel * (boxW + gapX) - gapX + padding * 2);
+    const wrapper = this.canvas.parentElement;
+    const viewW = wrapper ? wrapper.clientWidth : 0;
+    const viewH = wrapper ? wrapper.clientHeight : 0;
+
+    const canvasW = Math.max(
+      viewW,
+      800,
+      maxFilesInLevel * (boxW + gapX) - gapX + padding * 2
+    );
     const canvasH = Math.max(
+      viewH,
       500,
       totalBoxesHeight + (sortedLevels.length - 1) * gapY + padding * 2
     );
