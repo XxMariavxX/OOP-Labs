@@ -18,8 +18,8 @@
 
     &:hover,
     &.dropzone--active {
-      border-color: $btn-bg;
-      background-color: rgba(193, 106, 154, 0.25);
+      border-color: $dropzone-hover-border;
+      background-color: $dropzone-hover-bg;
     }
 
     .dropzone__icon {
@@ -29,7 +29,7 @@
     }
 
     .dropzone__text {
-      color: $text-muted;
+      color: $dropzone-text;
       font-size: 16px;
       font-weight: 500;
       text-align: center;

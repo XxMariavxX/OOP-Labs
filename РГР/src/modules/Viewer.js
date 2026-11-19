@@ -25,28 +25,28 @@ export class Viewer {
     const getVar = (name, fallback) => styles.getPropertyValue(name).trim() || fallback;
 
     return {
-      textLight: getVar("--text-light", "#F3E9EC"),
-      textMuted: getVar("--text-muted", "#D3A7C0"),
-      textHighlight: getVar("--text-highlight", "#FFFFFF"),
+      textLight: getVar("--text-light", "#C0B2B2"),
+      textMuted: getVar("--text-muted", "#A5878F"),
+      textHighlight: getVar("--text-highlight", "#C0B2B2"),
 
-      cppBg: getVar("--node-cpp-bg", "#2E1F35"),
-      cppBgHover: getVar("--node-cpp-bg-hover", "#3E2947"),
-      cppBorder: getVar("--node-cpp-border", "#D3A7C0"),
+      cppBg: getVar("--node-cpp-bg", "#4B2A53"),
+      cppBgHover: getVar("--node-cpp-bg-hover", "#6E4468"),
+      cppBorder: getVar("--node-cpp-border", "#896378"),
 
-      hBg: getVar("--node-h-bg", "#3A2242"),
-      hBgHover: getVar("--node-h-bg-hover", "#4D2D57"),
-      hBorder: getVar("--node-h-border", "#B47A9A"),
+      hBg: getVar("--node-h-bg", "#6E4468"),
+      hBgHover: getVar("--node-h-bg-hover", "#896378"),
+      hBorder: getVar("--node-h-border", "#A5878F"),
 
-      extBg: getVar("--node-ext-bg", "#1F1225"),
-      extBorder: getVar("--node-ext-border", "#82527D"),
+      extBg: getVar("--node-ext-bg", "#271637"),
+      extBorder: getVar("--node-ext-border", "#896378"),
 
-      edgeColor: getVar("--edge-color", "rgba(180, 122, 154, 0.38)"),
-      edgeColorDimmed: getVar("--edge-color-dimmed", "rgba(180, 122, 154, 0.08)"),
-      edgeArrow: getVar("--edge-arrow", "rgba(180, 122, 154, 0.5)"),
-      edgeArrowDimmed: getVar("--edge-arrow-dimmed", "rgba(180, 122, 154, 0.1)"),
-      edgeHighlight: getVar("--edge-highlight", "#F3E9EC"),
-      edgeLabelBg: getVar("--edge-label-bg", "#2E1F35"),
-      edgeLabelBorder: getVar("--edge-label-border", "#B47A9A"),
+      edgeColor: getVar("--edge-color", "rgba(165, 135, 143, 0.38)"),
+      edgeColorDimmed: getVar("--edge-color-dimmed", "rgba(165, 135, 143, 0.08)"),
+      edgeArrow: getVar("--edge-arrow", "rgba(165, 135, 143, 0.5)"),
+      edgeArrowDimmed: getVar("--edge-arrow-dimmed", "rgba(165, 135, 143, 0.1)"),
+      edgeHighlight: getVar("--edge-highlight", "#C0B2B2"),
+      edgeLabelBg: getVar("--edge-label-bg", "#271637"),
+      edgeLabelBorder: getVar("--edge-label-border", "#A5878F"),
     };
   }
 

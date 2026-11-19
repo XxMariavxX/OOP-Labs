@@ -45,7 +45,7 @@ body {
     border: none;
     font-family: inherit;
     background-color: $btn-bg;
-    color: $bg-page;
+    color: $btn-text;
     padding: 10px 20px;
     border-radius: 6px;
     cursor: pointer;
@@ -66,8 +66,9 @@ body {
   }
 
   &__status {
-    color: $text-light;
+    color: $accent-pink;
     font-size: 14px;
+    font-weight: 500;
     white-space: normal;
   }
 
@@ -87,7 +88,7 @@ body {
     flex: 1;
     position: relative;
     overflow: auto;
-    background-color: #140B17;
+    background-color: $bg-canvas;
   }
 
   &__canvas {

@@ -1,29 +1,29 @@
 @use 'variables' as *;
 
-$node-cpp-bg: #2E1F35;
-$node-cpp-bg-hover: #3E2947;
-$node-cpp-border: #D3A7C0;
+$node-cpp-bg: #4B2A53;
+$node-cpp-bg-hover: #6E4468;
+$node-cpp-border: #896378;
 
-$node-h-bg: #3A2242;
-$node-h-bg-hover: #4D2D57;
-$node-h-border: #B47A9A;
+$node-h-bg: #6E4468;
+$node-h-bg-hover: #896378;
+$node-h-border: #A5878F;
 
-$node-ext-bg: #1F1225;
-$node-ext-border: #82527D;
+$node-ext-bg: #271637;
+$node-ext-border: #896378;
 
-$edge-color: rgba(180, 122, 154, 0.38);
-$edge-color-dimmed: rgba(180, 122, 154, 0.08);
-$edge-arrow: rgba(180, 122, 154, 0.5);
-$edge-arrow-dimmed: rgba(180, 122, 154, 0.1);
-$edge-highlight: #F3E9EC;
-$edge-label-bg: #2E1F35;
-$edge-label-border: #B47A9A;
+$edge-color: rgba(165, 135, 143, 0.38);
+$edge-color-dimmed: rgba(165, 135, 143, 0.08);
+$edge-arrow: rgba(165, 135, 143, 0.5);
+$edge-arrow-dimmed: rgba(165, 135, 143, 0.1);
+$edge-highlight: #C0B2B2;
+$edge-label-bg: #271637;
+$edge-label-border: #A5878F;
 
 .main__canvas {
   --canvas-bg: #{$bg-canvas};
   --text-light: #{$text-light};
   --text-muted: #{$text-muted};
-  --text-highlight: #FFFFFF;
+  --text-highlight: #C0B2B2;
 
   --node-cpp-bg: #{$node-cpp-bg};
   --node-cpp-bg-hover: #{$node-cpp-bg-hover};
