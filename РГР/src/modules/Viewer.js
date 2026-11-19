@@ -362,9 +362,8 @@ export class Viewer {
       endX = parentPos.x + parentPos.w / 2;
       endY = parentPos.y + parentPos.h;
     } else {
-      const outRatio = outTotal === 1 ? 0.5 : 0.2 + (0.65 * outIndex) / (outTotal - 1);
       const inRatio = inTotal === 1 ? 0.5 : 0.15 + (0.7 * inIndex) / (inTotal - 1);
-      startX = childPos.x + childPos.w * outRatio;
+      startX = childPos.x + childPos.w / 2;
       startY = childPos.y;
       endX = parentPos.x + parentPos.w * inRatio;
       endY = parentPos.y + parentPos.h + 2;
