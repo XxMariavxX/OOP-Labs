@@ -17,6 +17,7 @@ export class Manager {
     if (this.folderInput) {
       this.folderInput.addEventListener("change", async (e) => {
         if (this.status) this.status.textContent = "Читання файлів...";
+        if (this.viewer) this.viewer.reset();
 
         let files = [];
         const raw = e.target.files || [];
@@ -107,6 +108,7 @@ export class Manager {
       }
 
       if (this.status) this.status.textContent = "Читання файлів...";
+      if (this.viewer) this.viewer.reset();
       this.scanned = 0;
       const files = [];
       try {
