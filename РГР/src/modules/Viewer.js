@@ -4,6 +4,7 @@ export class Viewer {
     this.ctx = this.canvas ? this.canvas.getContext("2d") : null;
     this.nodePositions = new Map();
     this.hoveredNodeId = null;
+    this.pointerPos = { x: 0, y: 0 };
     this.lastNodes = [];
     this.theme = this.loadTheme();
 
@@ -22,7 +23,8 @@ export class Viewer {
   loadTheme() {
     const target = this.canvas || document.documentElement;
     const styles = getComputedStyle(target);
-    const getVar = (name, fallback) => styles.getPropertyValue(name).trim() || fallback;
+    const getVar = (name, fallback) =>
+      styles.getPropertyValue(name).trim() || fallback;
 
     return {
       textLight: getVar("--text-light", "#C0B2B2"),
@@ -57,6 +59,7 @@ export class Viewer {
     if (this.canvas) {
       this.canvas.width = 0;
       this.canvas.height = 0;
+      this.canvas.style.cursor = "default";
     }
   }
 
@@ -66,13 +69,14 @@ export class Viewer {
     const rect = this.canvas.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
+    this.pointerPos = { x: mouseX, y: mouseY };
 
     let foundId = null;
     for (const [id, pos] of this.nodePositions.entries()) {
       if (
         mouseX >= pos.x &&
         mouseX <= pos.x + pos.w &&
-        mouseY >= pos.y - 22 &&
+        mouseY >= pos.y &&
         mouseY <= pos.y + pos.h
       ) {
         foundId = id;
@@ -84,6 +88,8 @@ export class Viewer {
       this.hoveredNodeId = foundId;
       this.canvas.style.cursor = foundId ? "pointer" : "default";
       this.drawScene();
+    } else if (foundId !== null) {
+      this.drawScene();
     }
   }
 
@@ -94,39 +100,38 @@ export class Viewer {
     this.hoveredNodeId = null;
     this.calculateLayout(fileNodes);
     this.drawScene();
-    this.scrollToTopRow();
+    this.scrollToBottomRow();
   }
 
   handleResize() {
     if (!this.canvas || !this.ctx || this.lastNodes.length === 0) return;
     this.hoveredNodeId = null;
-    if (this.canvas) this.canvas.style.cursor = "default";
+    this.canvas.style.cursor = "default";
     this.calculateLayout(this.lastNodes);
     this.drawScene();
   }
 
-  scrollToTopRow() {
+  scrollToBottomRow() {
     if (!this.canvas || this.nodePositions.size === 0) return;
-
     const wrapper = this.canvas.parentElement;
     if (!wrapper) return;
 
-    let minY = Infinity;
-    let firstTopNodeX = Infinity;
+    const targetScrollTop = Math.max(
+      0,
+      this.canvas.height - wrapper.clientHeight - 40
+    );
+    wrapper.scrollTop = targetScrollTop;
+    wrapper.scrollLeft = Math.max(
+      0,
+      (this.canvas.width - wrapper.clientWidth) / 2
+    );
+  }
 
-    for (const pos of this.nodePositions.values()) {
-      if (pos.y < minY) {
-        minY = pos.y;
-        firstTopNodeX = pos.x;
-      } else if (Math.abs(pos.y - minY) < 5 && pos.x < firstTopNodeX) {
-        firstTopNodeX = pos.x;
-      }
-    }
-
-    if (Number.isFinite(firstTopNodeX)) {
-      wrapper.scrollTop = 0;
-      wrapper.scrollLeft = Math.max(0, firstTopNodeX - 50);
-    }
+  getNodeKind(node) {
+    if (node.isExternal) return "ext";
+    if (/\.(h|hpp)$/i.test(node.name)) return "h";
+    if (/\.rc$/i.test(node.name)) return "rc";
+    return "cpp";
   }
 
   calculateLayout(fileNodes) {
@@ -173,48 +178,66 @@ export class Viewer {
       }
     });
 
-    const boxW = 210;
-    const titleOffset = 24;
-    const gapX = 45;
-    const gapY = 120;
-    const padding = 50;
+    const wrapper = this.canvas.parentElement;
+    const viewW = wrapper ? wrapper.clientWidth : 0;
+    const viewH = wrapper ? wrapper.clientHeight : 0;
+
+    const scaleX = Math.min(1, Math.max(0.55, viewW / 1100));
+    const scaleY = Math.min(1, Math.max(0.5, viewH / 800));
+    const boxScale = Math.min(1, Math.max(0.62, viewW / 1000));
+
+    const boxW = Math.round(228 * boxScale);
+    const headerH = Math.round(28 * Math.max(0.85, boxScale));
+    const lineH = Math.round(16 * Math.max(0.875, boxScale));
+    const maxVisibleLines = 5;
+    const gapX = Math.round(40 * scaleX);
+    const baseGapY = 100;
+    const topPadding = 56;
+    const bottomPadding = 130;
 
     const rowHeights = new Map();
     for (const lvl of sortedLevels) {
       const nodesInRow = levels.get(lvl);
       const maxLines = Math.max(
         1,
-        ...nodesInRow.map((n) => Math.min((n.displayLines || []).length, 5))
+        ...nodesInRow.map((n) =>
+          Math.min((n.displayLines || []).length || 1, maxVisibleLines + 1)
+        )
       );
-      rowHeights.set(lvl, Math.max(54, maxLines * 17 + 22));
+      rowHeights.set(lvl, headerH + maxLines * lineH + 22);
     }
 
-    const maxFilesInLevel = Math.max(...[...levels.values()].map((l) => l.length));
+    const maxFilesInLevel = Math.max(
+      1,
+      ...[...levels.values()].map((l) => l.length)
+    );
+    const gapY = Math.round(
+      (baseGapY + Math.max(0, maxFilesInLevel - 3) * 8) * scaleY
+    );
     const totalBoxesHeight = [...rowHeights.values()].reduce(
-      (acc, h) => acc + h + titleOffset,
+      (acc, h) => acc + h,
       0
     );
-
-    const wrapper = this.canvas.parentElement;
-    const viewW = wrapper ? wrapper.clientWidth : 0;
-    const viewH = wrapper ? wrapper.clientHeight : 0;
 
     const canvasW = Math.max(
       viewW,
       800,
-      maxFilesInLevel * (boxW + gapX) - gapX + padding * 2
+      maxFilesInLevel * (boxW + gapX) - gapX + topPadding * 2
     );
     const canvasH = Math.max(
       viewH,
       500,
-      totalBoxesHeight + (sortedLevels.length - 1) * gapY + padding * 2
+      totalBoxesHeight +
+        Math.max(0, sortedLevels.length - 1) * gapY +
+        topPadding +
+        bottomPadding
     );
 
     this.canvas.width = canvasW;
     this.canvas.height = canvasH;
 
     this.nodePositions.clear();
-    let currentY = padding;
+    let currentY = topPadding;
 
     sortedLevels.forEach((lvl) => {
       const nodesInRow = levels.get(lvl);
@@ -224,17 +247,19 @@ export class Viewer {
 
       nodesInRow.forEach((node, colIndex) => {
         const x = startX + colIndex * (boxW + gapX);
-        const boxY = currentY + titleOffset;
         this.nodePositions.set(node.id || node.name, {
           x,
-          y: boxY,
+          y: currentY,
           w: boxW,
           h: boxH,
+          headerH,
+          lineH,
+          maxVisibleLines,
           node,
         });
       });
 
-      currentY += titleOffset + boxH + gapY;
+      currentY += boxH + gapY;
     });
   }
 
@@ -279,17 +304,11 @@ export class Viewer {
     }
 
     const allEdges = [];
-
     for (const [parentId, parentPos] of this.nodePositions.entries()) {
-      const dependencies = parentPos.node.includes || [];
-
-      for (const childId of dependencies) {
+      for (const childId of parentPos.node.includes || []) {
         const childPos = this.nodePositions.get(childId);
         if (!childPos) continue;
-
-        const isHighlighted =
-          hasHover && activeEdges.has(`${parentId}->${childId}`);
-
+        const isHighlighted = hasHover && activeEdges.has(`${parentId}->${childId}`);
         allEdges.push({ parentPos, childPos, isHighlighted, childId, parentId });
       }
     }
@@ -330,7 +349,7 @@ export class Viewer {
     for (const [id, pos] of this.nodePositions.entries()) {
       const dimmed = hasHover && !activeNodes.has(id);
       const highlighted = hasHover && id === this.hoveredNodeId;
-      this.drawNode(ctx, pos.x, pos.y, pos.w, pos.h, pos.node, dimmed, highlighted);
+      this.drawNode(ctx, pos, dimmed, highlighted);
     }
 
     for (const edge of highlightedEdges) {
@@ -341,6 +360,19 @@ export class Viewer {
     for (const edge of highlightedEdges) {
       this.drawEdge(ctx, edge, true, hasHover, true, drawnLabels);
     }
+
+    if (hasHover) {
+      const pos = this.nodePositions.get(this.hoveredNodeId);
+      if (pos && (pos.node.displayLines || []).length > pos.maxVisibleLines) {
+        const hidden = (pos.node.displayLines || []).slice(pos.maxVisibleLines);
+        this.drawTooltip(ctx, pos.node, hidden);
+      }
+    }
+  }
+
+  getSpreadRatio(index, total) {
+    if (total <= 1) return 0.5;
+    return 0.14 + (0.72 * index) / (total - 1);
   }
 
   drawEdge(ctx, edge, isHighlighted, hasHover, onlyLabel = false, drawnLabels = []) {
@@ -357,37 +389,27 @@ export class Viewer {
 
     let startX, startY, endX, endY;
     if (sameRow) {
-      startX = childPos.x + childPos.w / 2;
+      startX = childPos.x + childPos.w * this.getSpreadRatio(outIndex, outTotal);
       startY = childPos.y + childPos.h;
-      endX = parentPos.x + parentPos.w / 2;
+      endX = parentPos.x + parentPos.w * this.getSpreadRatio(inIndex, inTotal);
       endY = parentPos.y + parentPos.h;
     } else {
-      const inRatio = inTotal === 1 ? 0.5 : 0.15 + (0.7 * inIndex) / (inTotal - 1);
-      startX = childPos.x + childPos.w / 2;
+      startX = childPos.x + childPos.w * this.getSpreadRatio(outIndex, outTotal);
       startY = childPos.y;
-      endX = parentPos.x + parentPos.w * inRatio;
+      endX = parentPos.x + parentPos.w * this.getSpreadRatio(inIndex, inTotal);
       endY = parentPos.y + parentPos.h + 2;
     }
 
     const headLen = isHighlighted ? 10 : 8;
-    let cp1x, cp1y, cp2x, cp2y, angle;
-
-    if (sameRow) {
-      const arcDrop = 45;
-      cp1x = startX;
-      cp1y = startY + arcDrop;
-      cp2x = endX;
-      cp2y = endY + arcDrop;
-      angle = -Math.PI / 2;
-    } else {
-      const distY = Math.abs(startY - endY);
-      const handleOffset = Math.min(90, Math.max(40, distY * 0.45));
-      cp1x = startX;
-      cp1y = startY - handleOffset;
-      cp2x = endX;
-      cp2y = endY + handleOffset;
-      angle = -Math.PI / 2;
-    }
+    const distY = Math.abs(startY - endY);
+    const handleOffset = sameRow
+      ? 40
+      : Math.min(80, Math.max(18, distY * 0.4));
+    const cp1x = startX;
+    const cp1y = sameRow ? startY + handleOffset : startY - handleOffset;
+    const cp2x = endX;
+    const cp2y = sameRow ? endY + handleOffset : endY + handleOffset;
+    const angle = -Math.PI / 2;
 
     ctx.save();
 
@@ -397,9 +419,9 @@ export class Viewer {
         return;
       }
 
-      const labelW = 56;
+      const labelW = 58;
       const labelH = 18;
-      const candidates = sameRow ? [0.5] : [0.85, 0.72, 0.58, 0.44, 0.3];
+      const candidates = sameRow ? [0.5] : [0.84, 0.7, 0.56, 0.42, 0.28];
       let chosenX = null;
       let chosenY = null;
 
@@ -418,7 +440,7 @@ export class Viewer {
 
         const overlaps = drawnLabels.some(
           (box) =>
-            Math.abs(box.x - lx) < labelW + 4 &&
+            Math.abs(box.x - lx) < labelW + 6 &&
             Math.abs(box.y - ly) < labelH + 4
         );
 
@@ -432,11 +454,19 @@ export class Viewer {
       if (chosenX !== null) {
         drawnLabels.push({ x: chosenX, y: chosenY });
 
+        this.roundRectPath(
+          ctx,
+          chosenX - labelW / 2,
+          chosenY - labelH / 2,
+          labelW,
+          labelH,
+          4
+        );
         ctx.fillStyle = t.edgeLabelBg;
-        ctx.strokeStyle = t.edgeLabelBorder;
+        ctx.fill();
         ctx.lineWidth = 1;
-        ctx.fillRect(chosenX - labelW / 2, chosenY - labelH / 2, labelW, labelH);
-        ctx.strokeRect(chosenX - labelW / 2, chosenY - labelH / 2, labelW, labelH);
+        ctx.strokeStyle = t.edgeLabelBorder;
+        ctx.stroke();
 
         ctx.fillStyle = t.edgeHighlight;
         ctx.font = "600 10px system-ui, sans-serif";
@@ -490,59 +520,151 @@ export class Viewer {
     ctx.restore();
   }
 
-  drawNode(ctx, x, y, w, h, node, dimmed, highlighted) {
+  drawNode(ctx, pos, dimmed, highlighted) {
+    const { x, y, w, h, headerH, lineH, maxVisibleLines, node } = pos;
     const t = this.theme;
+    const kind = this.getNodeKind(node);
+
     ctx.save();
-    if (dimmed) ctx.globalAlpha = 0.3;
+    if (dimmed) ctx.globalAlpha = 0.28;
 
-    ctx.fillStyle = highlighted ? t.textHighlight : t.textLight;
-    ctx.font = "700 13px system-ui, sans-serif";
-    ctx.textAlign = "left";
-    ctx.textBaseline = "bottom";
-    const title = node.isExternal ? node.name : node.path || node.name;
-    ctx.fillText(this.truncateText(ctx, title, w), x, y - 6);
+    let bg = t.cppBg;
+    let border = t.cppBorder;
 
-    ctx.beginPath();
-    ctx.rect(x, y, w, h);
-
-    if (node.isExternal) {
-      ctx.fillStyle = t.extBg;
-      ctx.setLineDash([5, 4]);
-      ctx.strokeStyle = highlighted ? t.edgeHighlight : t.extBorder;
-    } else if (node.name.endsWith(".h") || node.name.endsWith(".hpp")) {
-      ctx.fillStyle = highlighted ? t.hBgHover : t.hBg;
-      ctx.strokeStyle = highlighted ? t.edgeHighlight : t.hBorder;
+    if (kind === "ext") {
+      bg = t.extBg;
+      border = t.extBorder;
+    } else if (kind === "h") {
+      bg = highlighted ? t.hBgHover : t.hBg;
+      border = t.hBorder;
+    } else if (kind === "rc") {
+      bg = highlighted ? t.cppBgHover : t.cppBg;
+      border = t.hBorder;
     } else {
-      ctx.fillStyle = highlighted ? t.cppBgHover : t.cppBg;
-      ctx.strokeStyle = highlighted ? t.edgeHighlight : t.cppBorder;
+      bg = highlighted ? t.cppBgHover : t.cppBg;
     }
 
+    this.roundRectPath(ctx, x, y, w, h, 8);
+    ctx.fillStyle = bg;
     ctx.fill();
-    ctx.lineWidth = highlighted ? 2.5 : 1.5;
+
+    if (kind === "ext") {
+      ctx.setLineDash([5, 4]);
+    }
+    ctx.lineWidth = highlighted ? 2.4 : 1.5;
+    ctx.strokeStyle = highlighted ? t.edgeHighlight : border;
     ctx.stroke();
     ctx.setLineDash([]);
 
-    const lines = node.displayLines || [];
-    const maxVisible = 5;
+    ctx.beginPath();
+    ctx.moveTo(x + 1, y + headerH);
+    ctx.lineTo(x + w - 1, y + headerH);
+    ctx.strokeStyle = "rgba(192, 178, 178, 0.16)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    const title = node.name;
+    const maxTitleW = Math.max(40, w - 20);
+    ctx.fillStyle = highlighted ? t.textHighlight : t.textLight;
+    ctx.font = "700 12.5px system-ui, sans-serif";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    ctx.fillText(
+      this.truncateText(ctx, title, maxTitleW),
+      x + 10,
+      y + headerH / 2 + 0.5
+    );
+
+    const lines =
+      node.displayLines && node.displayLines.length > 0
+        ? node.displayLines
+        : ["(немає #include)"];
+    const visible = lines.slice(0, maxVisibleLines);
+    const remaining = lines.length - visible.length;
+    const bodyStartY = y + headerH + 8;
+
     ctx.font = "400 11px Consolas, monospace";
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
 
-    lines.slice(0, maxVisible).forEach((line, idx) => {
-      ctx.fillStyle = node.isExternal ? t.textMuted : t.textLight;
-      ctx.fillText(this.truncateText(ctx, line, w - 16), x + 8, y + 8 + idx * 17);
+    visible.forEach((line, idx) => {
+      ctx.fillStyle = kind === "ext" ? t.textMuted : t.textLight;
+      ctx.fillText(
+        this.truncateText(ctx, line, w - 20),
+        x + 10,
+        bodyStartY + idx * lineH
+      );
     });
 
-    if (lines.length > maxVisible) {
-      ctx.fillStyle = t.hBorder;
+    if (remaining > 0) {
+      ctx.font = "700 11px system-ui, sans-serif";
+      ctx.fillStyle = t.edgeHighlight;
       ctx.fillText(
-        `... ще ${lines.length - maxVisible}`,
-        x + 8,
-        y + 8 + maxVisible * 17
+        `… ще ${remaining}`,
+        x + 10,
+        bodyStartY + visible.length * lineH
       );
     }
 
     ctx.restore();
+  }
+
+  drawTooltip(ctx, node, lines) {
+    const t = this.theme;
+    const font = "400 11px Consolas, monospace";
+    const lineH = 16;
+    const padX = 10;
+    const padY = 8;
+    const titleH = 20;
+
+    ctx.save();
+    ctx.font = font;
+    let textW = ctx.measureText(node.name).width;
+    for (const line of lines) {
+      textW = Math.max(textW, ctx.measureText(line).width);
+    }
+
+    const boxW = textW + padX * 2;
+    const boxH = titleH + lines.length * lineH + padY * 2;
+
+    let x = this.pointerPos.x + 16;
+    let y = this.pointerPos.y + 16;
+    if (x + boxW > this.canvas.width - 10) x = this.pointerPos.x - boxW - 16;
+    if (y + boxH > this.canvas.height - 10) y = this.canvas.height - boxH - 10;
+    if (x < 0) x = 10;
+    if (y < 0) y = 10;
+
+    this.roundRectPath(ctx, x, y, boxW, boxH, 6);
+    ctx.fillStyle = t.edgeLabelBg;
+    ctx.fill();
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = t.edgeLabelBorder;
+    ctx.stroke();
+
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.fillStyle = t.textHighlight;
+    ctx.font = "700 12px system-ui, sans-serif";
+    ctx.fillText(node.name, x + padX, y + padY);
+
+    ctx.font = font;
+    lines.forEach((line, idx) => {
+      ctx.fillStyle = t.textLight;
+      ctx.fillText(line, x + padX, y + padY + titleH + idx * lineH);
+    });
+
+    ctx.restore();
+  }
+
+  roundRectPath(ctx, x, y, w, h, r) {
+    const radius = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.arcTo(x + w, y, x + w, y + h, radius);
+    ctx.arcTo(x + w, y + h, x, y + h, radius);
+    ctx.arcTo(x, y + h, x, y, radius);
+    ctx.arcTo(x, y, x + w, y, radius);
+    ctx.closePath();
   }
 
   truncateText(ctx, text, maxWidth) {
