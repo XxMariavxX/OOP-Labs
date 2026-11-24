@@ -3,8 +3,6 @@ export class Manager {
     this.analysis = analysis;
     this.viewer = viewer;
 
-    this.dropArea = document.getElementById("canvasWrapper");
-    this.dropZone = document.getElementById("dropZone");
     this.folderInput = document.getElementById("folderInput");
     this.status = document.getElementById("status");
 
@@ -41,53 +39,6 @@ export class Manager {
         await this.processFiles(files, folderName);
       });
     }
-
-    const zones = [this.dropZone, this.dropArea].filter(Boolean);
-
-    zones.forEach((zone) => {
-      zone.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        if (this.dropZone) this.dropZone.classList.add("dropzone--active");
-      });
-
-      zone.addEventListener("dragleave", (e) => {
-        e.preventDefault();
-        if (this.dropZone) this.dropZone.classList.remove("dropzone--active");
-      });
-
-      zone.addEventListener("drop", async (e) => {
-        e.preventDefault();
-        if (this.dropZone) this.dropZone.classList.remove("dropzone--active");
-        const handles = Array.from(e.dataTransfer.items || [])
-          .filter((item) => item.kind === "file")
-          .map((item) => ({
-            entry: item.webkitGetAsEntry ? item.webkitGetAsEntry() : null,
-            file: item.getAsFile(),
-          }));
-        const folderName = handles[0] && handles[0].entry ? handles[0].entry.name : "";
-        const files = [];
-
-        if (this.status) this.status.textContent = "Читання файлів...";
-
-        try {
-          for (const { entry, file } of handles) {
-            if (entry) {
-              await this.traverseFileTree(entry, files);
-            } else if (file) {
-              files.push(file);
-            }
-          }
-        } catch (err) {
-          if (this.status) {
-            this.status.textContent = `Помилка: ${err && err.message ? err.message : err}`;
-          }
-          console.error("traverse error:", err);
-          return;
-        }
-
-        await this.processFiles(files, folderName);
-      });
-    });
   }
 
   initPicker() {

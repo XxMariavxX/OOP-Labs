@@ -67,18 +67,6 @@ body {
   font-weight: 500;
   white-space: normal;
 }
-.main__or {
-  color: #A5878F;
-  font-size: 13px;
-  font-weight: 500;
-  flex-shrink: 0;
-}
-@media (max-width: 480px) {
-  .main__or {
-    flex-basis: 100%;
-    text-align: center;
-  }
-}
 .main__canvas-wrapper {
   flex: 1;
   position: relative;
@@ -109,42 +97,6 @@ body {
   --edge-highlight: #C0B2B2;
   --edge-label-bg: #271637;
   --edge-label-border: #A5878F;
-}
-
-.dropzone--compact {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  max-width: 320px;
-  min-height: 48px;
-  height: auto;
-  border: 2px dashed #B47A9A;
-  border-radius: 6px;
-  background-color: rgba(94, 58, 92, 0.35);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-}
-.dropzone--compact:hover, .dropzone--compact.dropzone--active {
-  border-color: #82527D;
-  background-color: rgba(193, 106, 154, 0.25);
-}
-.dropzone--compact .dropzone__icon {
-  font-size: 18px;
-  margin-right: 6px;
-  pointer-events: none;
-}
-.dropzone--compact .dropzone__text {
-  color: #D3A7C0;
-  font-size: 16px;
-  font-weight: 500;
-  text-align: center;
-  pointer-events: none;
-  white-space: normal;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  line-height: 1.2;
 }
 
 /*# sourceMappingURL=style.css.map */

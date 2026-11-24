@@ -72,18 +72,6 @@ body {
     white-space: normal;
   }
 
-  &__or {
-    color: $text-muted;
-    font-size: 13px;
-    font-weight: 500;
-    flex-shrink: 0;
-
-    @media (max-width: 480px) {
-      flex-basis: 100%;
-      text-align: center;
-    }
-  }
-
   &__canvas-wrapper {
     flex: 1;
     position: relative;
