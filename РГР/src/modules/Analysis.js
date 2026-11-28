@@ -3,7 +3,6 @@ export class Analysis {
     this.files = [];
     this.cppFilesCount = 0;
     this.fileNodes = [];
-    this.dependencies = new Map();
   }
 
   getNormalizedPath(file) {
@@ -136,11 +135,6 @@ export class Analysis {
       node.includes = [...resolvedTargets];
     }
 
-    this.dependencies.clear();
-    for (const node of fileNodes) {
-      this.dependencies.set(node.id, node.includes);
-    }
-
     return { fileNodes, pathMap };
   }
 
@@ -188,7 +182,6 @@ export class Analysis {
     if (!files) throw new Error("Список файлів порожній.");
 
     this.fileNodes = [];
-    this.dependencies.clear();
     this.files = Array.from(files);
 
     const cppFiles = this.files.filter((f) =>

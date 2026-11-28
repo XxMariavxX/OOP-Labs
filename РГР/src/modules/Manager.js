@@ -24,14 +24,6 @@ export class Manager {
           if (/\.(cpp|h|rc)$/i.test(f.name)) files.push(f);
         }
 
-        if (files.length === 0 && e.target.webkitEntries && e.target.webkitEntries.length > 0) {
-          const collected = [];
-          for (const entry of e.target.webkitEntries) {
-            await this.traverseFileTree(entry, collected);
-          }
-          files = collected;
-        }
-
         const folderName = files.length > 0 && files[0].webkitRelativePath
           ? files[0].webkitRelativePath.split("/")[0]
           : (files.length > 0 ? files[0].name : "");
@@ -83,44 +75,6 @@ export class Manager {
       } else if (/\.(cpp|h|rc)$/i.test(handle.name)) {
         files.push(await handle.getFile());
       }
-    }
-  }
-
-  async traverseFileTree(item, files) {
-    if (item.isFile) {
-      const name = item.name || "";
-      if (!/\.(cpp|h|rc)$/i.test(name)) {
-        return; // пропускаємо непотрібні файли
-      }
-      return new Promise((resolve, reject) => {
-        item.file(
-          (file) => {
-            files.push(file);
-            resolve();
-          },
-          (err) => reject(new Error(`Не вдалося прочитати файл "${item.name}": ${err && err.message ? err.message : err}`))
-        );
-      });
-    }
-
-    if (item.isDirectory) {
-      const ignored = new Set(["build", "node_modules", ".git", "out", "dist", "debug", "release", "x64", "x86"]);
-      if (ignored.has((item.name || "").toLowerCase())) {
-        return; // пропускаємо службові папки
-      }
-      const dirReader = item.createReader();
-      const readBatch = () =>
-        new Promise((res, rej) => {
-          dirReader.readEntries(res, rej);
-        });
-      let entries = await readBatch();
-      while (entries && entries.length > 0) {
-        for (const entry of entries) {
-          await this.traverseFileTree(entry, files);
-        }
-        entries = await readBatch();
-      }
-      return;
     }
   }
 
